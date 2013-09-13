@@ -1,0 +1,55 @@
+﻿@model Spending.Models.AccountSubGroup
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@section head
+{
+	<style type="text/css">
+		th
+		{
+		    text-align: left;
+		    padding-right: 10px;
+		}
+		th, td
+		{
+		    padding-top: 5px;
+		    padding-bottom: 5px;
+		}
+	</style>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.GroupId)
+	
+	<table>
+		<tr>
+			<th>@Html.LabelFor(model => model.Name)</th>
+			<td>
+				@Html.EditorFor(model => model.Name)
+				@Html.ValidationMessageFor(model => model.Name)
+			</td>
+		</tr>
+		<tr>
+			<th>@Html.LabelFor(model => model.Order)</th>
+			<td>
+				@Html.EditorFor(model => model.Order)
+				@Html.ValidationMessageFor(model => model.Order)
+			</td>
+		</tr>
+	</table>
+	
+    <p>
+        <input type="submit" value="Create" />
+		@Html.ActionLink("Cancel", "Index", "Accounts")
+    </p>
+}
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

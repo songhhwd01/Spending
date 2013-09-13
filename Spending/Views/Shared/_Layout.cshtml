@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<title>@ViewBag.Title</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/Content/css")
+		@Styles.Render("~/Content/themes/base/jquery-ui.css")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")
+		@Scripts.Render("~/Scripts/jquery.event.drag.js")
+		@RenderSection("head", required: false)
+    </head>
+    <body>
+        <header>
+            <section id="login">
+                @Html.Partial("_LogOnPartial")
+            </section>
+            <nav>
+                <ul id="menu">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Accounts", "Index", "Accounts")</li>
+                </ul>
+            </nav>
+        </header>
+        <section id="body">
+            @RenderBody()
+        </section>
+
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

@@ -1,0 +1,27 @@
+﻿@model Spending.Models.CreateBudgetModel
+
+@{
+	var key = Model.NewBudgets.Keys.ElementAt(0);
+}
+
+<tr>
+	<td>
+		@Html.EditorFor(model => model.NewBudgets[key].Amount)
+	</td>
+	<td>
+		@Html.TextBoxFor(model => model.NewBudgets[key].StartingMonth, "{0:MM/dd/yyyy}")
+	</td>
+	<td>
+		@Html.EditorFor(model => model.NewBudgets[key].Frequency)
+	</td>
+	<td>
+		@Html.EditorFor(model => model.NewBudgets[key].Times)
+	</td>
+	<td>
+		@Html.EditorFor(model => model.NewBudgets[key].Notes)
+	</td>
+	<td>
+		<input type="hidden" name="NewBudgets.Index" value="@key" />
+		<a href="#" class="deleteRow">Delete</a>
+	</td>
+</tr>

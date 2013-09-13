@@ -1,0 +1,153 @@
+﻿@model Spending.Models.EditTransactionModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@section head
+{
+	<style type="text/css">
+		#fieldsTable,
+		#splitsTable { margin-bottom: 15px; }
+		#fieldsTable { background-color: #FFFFFF; width: 100%; border: 5px solid #2470B8; border-top: none; }
+		#fieldsTable td { padding: 5px; white-space: nowrap; border: 1px solid #F2F2F2; }
+		#fieldsTable tr:first-child td,
+		#fieldsTable td:first-child { border-color: #2470B8; background-color: #2470B8; color: rgba(255, 255, 255, 0.8); }
+		#fieldsTable td:first-child { width: 75px; text-align: right; }
+		#fieldsTable tr:first-child td:first-child { text-align: left; font-size: 1.5em; font-weight: bold; }
+		#fieldsTable tr:nth-child(2) td:nth-child(2) input { width: 200px; }
+		#splitsTable th:nth-child(3),
+		#splitsTable td:nth-child(3) { text-align: right; }
+		#splitsTable td:nth-child(3) input
+		{
+		    text-align: right;
+		    width: 70px;
+		}
+		#splitsTable th:nth-child(4),
+		#splitsTable td:nth-child(4)
+		{
+		    padding-left: 10px;
+		    text-align: center;
+		}
+		form:nth-child(1) { float: right; padding-bottom: 15px; }
+		form:nth-child(1) input { margin-right: 0px; }
+	</style>
+}
+
+@using (Html.BeginForm("Delete", "Transactions", new { id = Model.Id, accountId = Model.AccountId }))
+{
+	<input type="submit" value="Delete" />
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+	@Html.HiddenFor(model => model.AccountId);
+										  
+	<table id="fieldsTable">
+		<tr>
+			<td colspan="2">Edit Transaction</td>
+		</tr>
+		<tr>
+			<td>@Html.LabelFor(model => model.Date)</td>
+			<td>
+				@Html.EditorFor(model => model.Date)
+				@Html.ValidationMessageFor(model => model.Date)
+			</td>
+		</tr>
+		<tr>
+			<td>@Html.LabelFor(model => model.Credit)</td>
+			<td>
+				@Html.EditorFor(model => model.Credit)
+				@Html.ValidationMessageFor(model => model.Credit)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Pending)
+			</td>
+			<td>
+				@Html.EditorFor(model => model.Pending)
+				@Html.ValidationMessageFor(model => model.Pending)
+			</td>
+		</tr>
+	</table>
+	<table id="splitsTable" class="styledTable">
+		<tr class="headingsRow">
+			<td>Splits</td>
+			<td colspan="3">@Html.ActionLink("Add Split", "CreateSplit", null, new { id = "addLink", @class = "actionLnk" })</td>
+		</tr>
+		<tr class="headingsRow">
+			<td>Category</td>
+			<td>Notes</td>
+			<td>Amount</td>
+			<td></td>
+		</tr>
+
+		@for (int i = 0; i < Model.Splits.Count; i++)
+		{
+			<tr class="itemRow">
+				<td>
+					@Html.HiddenFor(model => model.Splits[i].Id)
+					@Html.DropDownListFor(model => model.Splits[i].CategoryId,
+						new SelectList(ViewBag.Categories, "Id", "Name", Model.Splits[i].CategoryId))
+					@Html.ValidationMessageFor(model => model.Splits[i].CategoryId)
+				</td>
+				<td>
+					@Html.TextBoxFor(model => model.Splits[i].Notes)
+				</td>
+				<td>
+					@Html.TextBoxFor(model => model.Splits[i].Amount)
+				</td>
+				<td>
+					@Html.CheckBoxFor(model => model.Splits[i].Delete)
+				</td>
+			</tr>
+		}
+
+		@for (int i = 0; i < Model.NewSplits.Count; i++)
+		{
+			var splitModel = new Spending.Models.CreateSplitModel();
+			splitModel.NewSplits.Add(Guid.NewGuid().ToString(), Model.NewSplits[i]);
+			@Html.Partial("CreateSplit", splitModel)
+		}
+	</table>
+
+	<p>
+		<input type="submit" value="Create" />
+		@Html.ActionLink("Cancel", "Details", "Accounts", new { id = Model.AccountId }, new { @class = "cancelLink" })
+	</p>
+}
+
+<script type="text/javascript">
+	$("#addLink").click(function ()
+	{
+		$.ajax(
+		{
+			url: this.href,
+			cache: false,
+			success: function (html) { $("#splitsTable").append(html); }
+		});
+
+		return false;
+	});
+
+	$("a.deleteRow").live("click", function ()
+	{
+		if ($("#splitsTable tr").length > 2)
+		{
+			$(this).parents("tr:first").remove();
+		}
+		else
+		{
+			alert("Must have at least one category.");
+		}
+
+		return false;
+	});
+</script>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

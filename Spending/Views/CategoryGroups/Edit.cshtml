@@ -1,0 +1,53 @@
+﻿@model CategoryGroup
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@section head
+{
+	<style type="text/css">
+		th
+		{
+		    text-align: left;
+		    padding-right: 10px;
+		}
+		th, td
+		{
+		    padding-top: 5px;
+		    padding-bottom: 5px;
+		}
+	</style>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Id)
+
+	<table>
+		<tr>
+			<th>@Html.LabelFor(model => model.Name)</th>
+			<td>
+				@Html.EditorFor(model => model.Name)
+				@Html.ValidationMessageFor(model => model.Name)
+			</td>
+		</tr>
+	</table>
+		
+	<p>
+        <input type="submit" value="Save" />
+		@Html.ActionLink("Cancel", "Index", "Home")
+    </p>
+}
+
+@using (Html.BeginForm("Delete", "CategorySubGroups", new { id = Model.Id }))
+{
+	<input type="submit" value="Delete" />
+}
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

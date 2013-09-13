@@ -1,0 +1,54 @@
+﻿@model Spending.Models.AccountsIndexModel
+
+@{
+    ViewBag.Title = "Accounts";
+}
+
+@section head
+{
+	<style type="text/css">
+		#accounts td:nth-child(2),
+		#accounts td:nth-child(3) { width: 40px; text-align: right; }
+	</style>
+}
+
+@{ string currencyFormat = "$#,##0.00"; }
+
+<div id="accounts">
+	<table class="styledTable">
+		<thead>
+			<tr>
+				<td>Accounts</td>
+				<td>Starting</td>
+				<td>Current</td>
+			</tr>
+			<tr class="totalsRow">
+				<td>@Html.ActionLink("+ Group", "Create", "AccountGroups", null, new { @class = "actionLnk" })</td>
+				<td>@Model.StartingTotal.ToString(currencyFormat)</td>
+				<td>@Model.EndingTotal.ToString(currencyFormat)</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var group in Model.Groups)
+			{
+				if (Model.Groups.Count > 1)
+				{
+					@Html.Partial("GroupHeaderRow", group)
+				}
+
+				foreach (var subGroup in group.SubGroups)
+				{
+					if (group.SubGroups.Count > 1)
+					{
+						@Html.Partial("SubGroupHeaderRow", subGroup)
+					}
+
+     				foreach (var item in subGroup.Items)
+					{
+						@Html.Partial("AccountRow", item)
+					}
+				}
+			}
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,23 @@
+﻿@model Spending.Models.CreateSplitModel
+
+@{
+	var key = Model.NewSplits.Keys.ElementAt(0);
+}
+
+<tr>
+	<td>
+		@Html.DropDownListFor(model => model.NewSplits[key].CategoryId,
+			new SelectList(ViewBag.Categories, "Id", "Name", Model.NewSplits[key].CategoryId))
+		@Html.ValidationMessageFor(model => model.NewSplits[key].CategoryId)
+	</td>
+	<td>
+		@Html.TextBoxFor(model => model.NewSplits[key].Notes)
+	</td>
+	<td>
+		@Html.TextBoxFor(model => model.NewSplits[key].Amount)
+	</td>
+	<td>
+		<input type="hidden" name="NewSplits.Index" value="@key" />
+		<a href="#" class="deleteRow">Delete</a>
+	</td>
+</tr>

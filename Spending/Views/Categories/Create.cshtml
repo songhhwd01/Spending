@@ -1,0 +1,153 @@
+﻿@model Spending.Models.EditCategoryModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@section head
+{
+	<style type="text/css">
+		#fieldsTable
+		{
+		    margin-bottom: 20px;
+		}
+		#fieldsTable td
+		{
+		    height: 35px;
+		}
+		#fieldsTable td:nth-child(1)
+		{
+		    padding-right: 10px;
+		}
+		#fieldsTable tr:nth-child(3) td:nth-child(2) input
+		{
+		    width: 100px;
+		    text-align: right;
+		}
+		#budgetsTable th
+		{
+		    font-weight: bold;
+		    background-image: -webkit-linear-gradient(top, #7FBFFF, #70B0F0 68%);
+		}
+		#budgetsTable th
+		{
+		    padding: 5px 5px 5px 5px;
+		}
+		#budgetsTable th:nth-child(1), #budgetsTable td:nth-child(1)
+		{
+		    text-align: left;
+		}
+		#budgetsTable th:nth-child(2), #budgetsTable td:nth-child(2)
+		{
+		    text-align: right;
+		}
+		#budgetsTable td:nth-child(2) input
+		{
+		    text-align: right;
+		    width: 100px;
+		}
+		#budgetsLabel,
+		label
+		{
+		    font-weight: bold;
+		    font-size: 1.25em;
+		}		
+	</style>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+	@Html.HiddenFor(model => model.OriginalStartingBalance)
+	
+	<table id="fieldsTable">
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Name)
+			</td>
+			<td>
+				@Html.EditorFor(model => model.Name)
+				@Html.ValidationMessageFor(model => model.Name)
+			</td>
+		</tr>
+		<tr>
+			<td>
+	            @Html.LabelFor(model => model.GroupId, "Group")
+			</td>
+			<td>
+	            @Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.SubGroups, "Id", "Name", Model.GroupId))
+		        @Html.ValidationMessageFor(model => model.GroupId)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.StartingBalance, "Starting Balance")
+			</td>
+			<td>
+				@Html.EditorFor(model => model.StartingBalance)
+		        @Html.ValidationMessageFor(model => model.StartingBalance)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Budget)
+			</td>
+			<td>
+			    @Html.EditorFor(model => model.Budget)
+		        @Html.ValidationMessageFor(model => model.Budget)
+			</td>
+		</tr>
+	</table>
+
+	<div id="budgetsLabel">Budgets</div>
+	<table id="budgetsTable">
+		<tr>
+			<th>Amount</th>
+			<th>Starting Month</th>
+			<th>Frequency</th>
+			<th>Times</th>
+			<th>Notes</th>
+			<th></th>
+		</tr>
+		
+		@for (int i = 0; i < Model.NewBudgets.Count; i++)
+		{
+			var budgetModel = new Spending.Models.CreateBudgetModel();
+			budgetModel.NewBudgets.Add(Guid.NewGuid().ToString(), Model.NewBudgets[i]);
+			@Html.Partial("CreateBudget", budgetModel)
+		}
+	</table>
+
+	@Html.ActionLink("Add Budget", "CreateBudget", null, new { id = "addLink" })
+
+	<p>
+		<input type="submit" value="Create" />
+		@Html.ActionLink("Cancel", "Index", null, new { @class = "cancelLink" })
+	</p>
+}
+
+<script type="text/javascript">
+	$("#addLink").click(function ()
+	{
+		$.ajax(
+		{
+			url: this.href,
+			cache: false,
+			success: function (html) { $("#budgetsTable").append(html); }
+		});
+
+		return false;
+	});
+
+	$("a.deleteRow").live("click", function ()
+	{
+		$(this).parents("tr:first").remove();
+		return false;
+	});
+</script>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

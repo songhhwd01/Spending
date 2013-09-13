@@ -1,0 +1,12 @@
+﻿@model Spending.Models.AccountSubGroupModel
+
+@{ string currencyFormat = "#,##0.00"; }
+
+<tr class="subGroupRow">
+	<th>
+        @Html.ActionLink(Model.Name, "Edit", "AccountSubGroups", new { id = Model.Id }, null)
+        @Html.ActionLink("+ Account", "Create", new { subGroupId = Model.Id })
+    </th>
+	<th>@Model.StartingTotal.ToString(currencyFormat)</th>
+	<th>@Model.EndingTotal.ToString(currencyFormat)</th>
+</tr>

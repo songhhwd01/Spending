@@ -1,0 +1,171 @@
+﻿@model HomeModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@section head
+{
+	<style type="text/css">
+		#body { width: 90%; }
+		#body table { margin-left: auto; margin-right: auto; }
+		#body td { padding: 3px 5px; white-space: nowrap; }
+		#body tbody td { border-bottom: 1px solid #F2F2F2; }
+
+		#body td:nth-child(1) { width: 150px; }
+		#body td:nth-child(4) { width: 200px; text-align: left; }
+		#body td:nth-child(7) { width: 15px; text-align: center; }
+		#body td:nth-child(2),
+		#body td:nth-child(3),
+		#body td:nth-child(5),
+		#body td:nth-child(6),
+		#body td:nth-child(8) { width: 50px; text-align: right; }
+
+		#body td:nth-child(1),
+		#body td:nth-child(2),
+		#body td:nth-child(5) { border-right: 1px dashed #D0E0F0; }
+
+		#body td:nth-child(1),
+		#body td:nth-child(2),
+		#body td:nth-child(3),
+		#body td:nth-child(4),
+		#body td:nth-child(6) { padding-left: 15px; }
+
+		#body td:nth-child(1),
+		#body td:nth-child(2),
+		#body td:nth-child(5),
+		#body td:nth-child(8) { padding-right: 15px; }
+
+		#monthDiv
+		{
+		    width: 770px;
+		    margin: 0px auto 5px auto;
+		    background-color: #3B414C;
+		    padding: 10px;
+		    text-align: center;
+		    color: White;
+		}
+		
+		#monthDiv span { font-weight: bold; color: #C6D3A0; }
+		#monthDiv h2 { color: White; margin: 0px 0px 5px; }
+
+		#headingsTable td { border-color: #3377BB; background-color: #3377BB; color: White; }
+		#headingsTable tbody td { border-color: #3377BB; }
+		#headingsTable td:first-child { border-left: 1px solid #3377BB; }
+		#headingsTable td:last-child { border-right: 1px solid #3377BB; }
+
+		#body .categoriesTable td:first-child { border-left: 1px solid #3377BB; }
+		#body .categoriesTable td:last-child { border-right: 1px solid #3377BB; }
+		#body .categoriesTable:first-child thead td { border-top: 1px solid #3377BB; }
+		#body .categoriesTable:last-child tbody tr:last-child td { border-bottom: 1px solid #3377BB; }
+		
+		#body .groupRow td
+		{
+		    background-color: #D0E0F0;
+		    padding-top: 5px;
+		    padding-bottom: 5px;
+			border-top: 1px solid #C0D0E0;
+			border-bottom: 1px solid #C0D0E0;
+		}
+
+		#body .itemRow td { background-color: #FFFFFF; }
+		#body .itemRow:last-child td { border-bottom: none; }
+
+		#body .actionLnk { font-size: 0.85em; margin-left: 10px; float: right; color: rgba(0, 0, 0, 0.3); }
+		#body .actionLnk:hover { color: #FFFFFF; }
+	</style>
+}
+
+<div id="monthDiv">
+	<h2>@Model.Month.ToString("MMMM yyyy")</h2>
+	<div><span>@Model.Unassigned.ToCurrencyString()</span> Unassigned</div>
+</div>
+<table id="headingsTable">
+	<thead>
+		<tr>
+			<td></td>
+			<td>Starting</td>
+			<td>Budget</td>
+			<td>Spent</td>
+			<td>Left</td>
+			<td>Ending</td>
+			<td></td>
+			<td>Goal</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="totalsRow">
+			<td>@Html.ActionLink("+ Group", "Create", "CategoryGroups", new { @class = "actionLnk" })</td>
+			<td>@Model.Starting.ToCurrencyString()</td>
+			<td>@Model.Budget.ToCurrencyString()</td>
+			<td>
+				<div class="meter@(Model.SpentPercent > 90 ? " end" : "")">
+					<span style="width: @Model.SpentPercent%"><span>@Model.Spent.ToCurrencyString()</span></span>
+				</div>
+			</td>
+			<td>@Model.Left.ToCurrencyString()</td>
+			<td>@Model.Ending.ToCurrencyString()</td>
+			<td></td>
+			<td>@Model.Goal.ToCurrencyString()</td>
+		</tr>
+	</tbody>
+</table>
+<div id="categories">
+	@foreach (var group in Model.Groups)
+	{
+		<table class="categoriesTable">
+			<thead>
+				@Html.Partial("GroupHeaderRow", group)
+			</thead>
+			<tbody>
+   				@foreach (var item in group.Items)
+				{
+					@Html.Partial("CategoryRow", item)
+				}
+			</tbody>
+		</table>
+	}
+</div>
+<script type="text/javascript">
+	var updateOrderUrl = '@Html.Raw(Url.Action("UpdateDayOrder", "Transactions", new { id = "ID", dayOrder = "ORDER" }))';
+
+	$(function ()
+	{
+		$("#categories table tbody").sortable({
+			axis: "y",
+			connectWith: "#categories table tbody",
+			stop: function (event, ui) {
+				var day = ui.item.attr("day");
+				var prevItem = ui.item.prev();
+				var nextItem = ui.item.next();
+
+				if (day != prevItem.attr("day") && day != nextItem.attr("day")) {
+					$("#transactions > table > tbody").sortable("cancel");
+				}
+			},
+			update: function (event, ui) {
+				var currItem = ui.item;
+				var prevItem = ui.item.prev();
+				var nextItem = ui.item.next();
+				var newOrder = 0;
+
+				if (currItem.attr("dayOrder") < prevItem.attr("dayOrder")) {
+					newOrder = prevItem.attr("dayOrder");
+				} else {
+					newOrder = nextItem.attr("dayOrder");
+				}
+
+				$.ajax({
+					type: "POST",
+					url: updateOrderUrl.replace("ID", ui.item.attr("transactionId")).replace("ORDER", newOrder)
+				});
+			}
+		});
+	});
+</script>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jquerydrag")
+}

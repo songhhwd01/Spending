@@ -1,0 +1,58 @@
+﻿@model Spending.Models.AccountLogOnModel
+
+@{
+    ViewBag.Title = "Log On";
+}
+
+@section head
+{
+	<style type="text/css">
+		td
+		{
+		    padding: 5px;
+		}
+		td:nth-child(1) label
+		{
+		    font-weight: bold;
+		    font-size: 1.25em;
+		}
+	</style>
+}
+
+@Html.ValidationSummary(true, "Login was unsuccessful. Please correct the errors and try again.")
+
+@using (Html.BeginForm())
+{
+    <table>
+		<tr>
+			<td>@Html.LabelFor(m => m.UserName)</td>
+			<td>
+                @Html.TextBoxFor(m => m.UserName)
+                @Html.ValidationMessageFor(m => m.UserName)
+			</td>
+		</tr>
+		<tr>
+            <td>@Html.LabelFor(m => m.Password)</td>
+			<td>
+                @Html.PasswordFor(m => m.Password)
+                @Html.ValidationMessageFor(m => m.Password)
+			</td>
+		</tr>
+		<tr>
+			<td />
+			<td>
+                @Html.CheckBoxFor(m => m.RememberMe)
+                @Html.LabelFor(m => m.RememberMe)
+			</td>
+		</tr>
+	</table>
+	<p>
+		<input type="submit" value="Log On" />
+	    @Html.ActionLink("Register", "Register")
+	</p>
+}
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

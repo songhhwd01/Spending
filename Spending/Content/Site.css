@@ -1,0 +1,299 @@
+﻿html
+{
+    margin: 0;
+    padding: 0;
+}
+
+body
+{
+    color: #333;
+    font-size: 0.75em;
+    font-family: Arial;
+    margin: 0;
+    padding: 0;
+}
+
+input
+{
+    font-size: 1em;
+}
+
+table
+{
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#body { padding: 30px; }
+a { text-decoration: none; color: Black; }
+
+header, footer, hgroup, nav, section
+{
+    display: block;
+}
+
+header
+{
+    padding: 20px 20px 5px 20px;
+    background-color: #3377BB;
+}
+
+mark
+{
+    background-color: #a6dbed;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+    color: #000;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+h1 { font-size: 2em; }
+h2 { font-size: 1.75em; }
+h3 { font-size: 1.2em; }
+h4 { font-size: 1.1em; }
+h5, h6 { font-size: 1em; }
+
+h5 a:link, h5 a:visited, h5 a:active
+{
+    padding: 0;
+    text-decoration: none;
+}
+
+#login
+{
+    float: right;
+    font-size: .85em;
+}
+
+ul#menu {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 0 0 5px;
+    padding: 0;
+}
+
+ul#menu li {
+    display: inline;
+    list-style: none;
+    padding-left: 15px;
+}
+
+ul#menu li a {
+    background: none;
+    color: White;
+    text-decoration: none;
+}
+
+ul#menu li a:hover {
+    color: #333;
+    text-decoration: none;
+}
+
+hgroup.title {
+    margin-bottom: 10px;
+}
+
+hgroup.title h1, hgroup.title h2 {
+    display: inline;
+}
+
+hgroup.title h2 {
+    font-weight: normal;
+    margin-left: 3px;
+}
+
+/* login page */
+#loginForm {
+    border-right: solid 2px #c8c8c8;
+    float: left;
+    width: 55%;
+}
+
+#loginForm .validation-error {
+    display: block;
+    margin-left: 15px;
+}
+
+#loginForm .validation-summary-errors ul {
+    margin: 0;
+    padding: 0;
+}
+
+#loginForm .validation-summary-errors li {
+    display: inline;
+    list-style: none;
+    margin: 0;
+}
+
+#loginForm input {
+    width: 250px;
+}
+
+#loginForm input[type="checkbox"],
+#loginForm input[type="submit"],
+#loginForm input[type="button"],
+#loginForm button {
+    width: auto;
+}
+
+#logoutForm {
+    display: inline;
+}
+
+select
+{
+    border: 1px solid #e2e2e2;
+    background: #fff;
+    color: #333;
+    height: 24px;
+    margin: 0;
+}
+
+input, textarea {
+    border: 1px solid #e2e2e2;
+    background: #fff;
+    color: #333;
+    padding: 3px;
+    width: 300px;
+    margin: 0;
+}
+
+textarea {
+    font-family: inherit;
+    width: 500px;
+}
+
+input:focus, textarea:focus {
+    border: 1px solid #7ac0da;
+}
+
+input[type="checkbox"] {
+    background: transparent;
+    border: inherit;
+    width: auto;
+}
+
+input[type="submit"],
+input[type="button"],
+button,
+.cancelLink
+{
+    border-radius: 5px;
+    font-size: 1.2em;
+    background-color: #F4F4F4;
+    border: 1px solid #2470B8;
+    cursor: pointer;
+    padding: 5px 8px;
+    margin-right: 5px;
+    width: auto;
+}
+
+/* info and errors */
+.message-info {
+    border: 1px solid;
+    clear: both;
+    padding: 10px 20px;
+}
+
+.message-error {
+    clear: both;
+    color: #e80c4d;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+}
+
+.message-success {
+    color: #7ac0da;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+}
+
+.error {
+    color: #e80c4d;
+}
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #e80c4d;
+    font-weight: bold;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #e80c4d;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #e80c4d;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.meter
+{ 
+	border-left: 1px solid rgba(0, 0, 0, 0);
+	border-right: 1px solid rgba(0, 0, 0, 0);
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+.meter > span
+{
+	position: relative;
+	left: -1px;
+	display: block;
+	border: 1px solid #AAAAAA;
+	background-color: #C6D3A0;
+	text-align: right;
+}
+
+.zeroBudget
+{
+	background-color: rgba(0, 0, 0, 0.015);
+}
+
+.zeroBudget > span,
+.meter > span.zeroPercent
+{
+	border-color: transparent;
+	background-color: transparent;
+}
+
+.meter > span > span
+{
+	padding: 0px 5px 0px 5px;
+	color: black;
+}
+
+body { background-color: #E0F0FC; }
+#body { width: 900px; margin-left: auto; margin-right: auto; }
+.styledTable { width: 100%; border: 2px solid #3377BB; border-top: none; }
+.styledTable > tfoot > tr > td,
+.styledTable > thead > tr > td,
+.styledTable > tbody > tr > td { padding: 5px; white-space: nowrap; border: 1px solid #F2F2F2; }
+.styledTable > thead > tr:nth-child(1) > td:nth-child(1) { font-size: 1.5em; font-weight: bold; }
+.styledTable .actionLnk { font-size: 0.85em; margin-left: 10px; float: right; color: rgba(255, 255, 255, 0.3); }
+.styledTable .actionLnk:hover { color: #FFFFFF; }
+.styledTable > tfoot > tr > td,
+.styledTable > thead > tr > td { border-color: #3377BB; background-color: #3377BB; color: rgba(255, 255, 255, 0.8); }
+.styledTable > tfoot > tr > td > a { color: rgba(255, 255, 255, 0.8); }
+.styledTable > tbody > .groupRow > td { background-color: #DDDDDD; }
+.styledTable > tbody > .itemRow:nth-child(odd) { background-color: #F8F9FD; }
+.styledTable > tbody > .itemRow:nth-child(even) { background-color: #FFFFFF; }
+
