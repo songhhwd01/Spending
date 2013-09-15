@@ -1,6 +1,6 @@
 ﻿@model Spending.Models.CategoryModel
 
-<tr class="itemRow">
+<tr class="itemRow" categoryId="@Model.Id">
 	<td>
 		@Html.ActionLink(Model.Name, "Edit", "Categories", new { id = Model.Id }, null)
 		<input type="hidden" value="@Model.Id" />

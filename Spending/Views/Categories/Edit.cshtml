@@ -99,15 +99,6 @@
 		</tr>
 		<tr>
 			<td>
-	            @Html.LabelFor(model => model.GroupId, "Group")
-			</td>
-			<td>
-	            @Html.DropDownListFor(model => model.GroupId, new SelectList(ViewBag.Groups, "Id", "Name", Model.GroupId))
-		        @Html.ValidationMessageFor(model => model.GroupId)
-			</td>
-		</tr>
-		<tr>
-			<td>
 				@Html.LabelFor(model => model.StartingBalance, "Starting Balance")
 			</td>
 			<td>

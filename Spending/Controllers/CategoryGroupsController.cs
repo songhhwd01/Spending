@@ -13,6 +13,43 @@ namespace Spending.Controllers
 	{
 		private SpendingContext db = new SpendingContext();
 
+		[HttpPost]
+		public ActionResult UpdateOrder(int id, int order)
+		{
+			var group = db.CategoryGroups.Find(id);
+
+			if (group == null)
+			{
+				return HttpNotFound();
+			}
+
+			group.Order = order;
+
+			db.CategoryGroups.Attach(group);
+
+			var categoryEntry = db.Entry(group);
+			categoryEntry.Property(x => x.Order).IsModified = true;
+
+			byte currOrder = 0;
+
+			foreach (var item in db.CategoryGroups.OrderBy(x => x.Order))
+			{
+				if (currOrder == order)
+				{
+					currOrder++;
+				}
+
+				if (item != group)
+				{
+					item.Order = currOrder++;
+				}
+			}
+
+			db.SaveChanges();
+
+			return new EmptyResult();
+		}
+
 		public ActionResult Create()
 		{
             return View(new CategoryGroup());

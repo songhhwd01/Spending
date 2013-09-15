@@ -15,6 +15,45 @@ namespace Spending.Controllers
 		private SpendingContext db = new SpendingContext();
 
 		[HttpPost]
+		public ActionResult UpdateOrder(int id, int groupId, int order)
+		{
+			var category = db.Categories.Find(id);
+
+			if (category == null)
+			{
+				return HttpNotFound();
+			}
+
+			category.GroupId = groupId;
+			category.Order = order;
+
+			db.Categories.Attach(category);
+
+			var categoryEntry = db.Entry(category);
+			categoryEntry.Property(x => x.GroupId).IsModified = true;
+			categoryEntry.Property(x => x.Order).IsModified = true;
+
+			byte currOrder = 0;
+
+			foreach (var item in db.Categories.Where(x => !x.Income && !x.System && x.GroupId == groupId).OrderBy(x => x.Order))
+			{
+				if (currOrder == order)
+				{
+					currOrder++;
+				}
+
+				if (item != category)
+				{
+					item.Order = currOrder++;
+				}
+			}
+
+			db.SaveChanges();
+
+			return new EmptyResult();
+		}
+
+		[HttpPost]
 		public ActionResult UpdateStartingBalance(int id, decimal value)
 		{
 			var category = new Category();
@@ -84,8 +123,6 @@ namespace Spending.Controllers
 			var user = db.Users.Find(Membership.GetUser().ProviderUserKey);
 
 			var currentMonth = user.Settings.Select(x => x.Month).First();
-
-			this.ViewBag.Groups = db.CategoryGroups;
 
 			EditCategoryModel model = new EditCategoryModel();
 			model.Id = category.Id;
