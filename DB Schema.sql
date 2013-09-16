@@ -1,4 +1,4 @@
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -7,31 +7,14 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 
-CREATE TABLE `accountgroups` (
+CREATE TABLE `accounts` (
   `Id` int(10) NOT NULL AUTO_INCREMENT,
   `UserId` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL,
-  `Order` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`Id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-CREATE TABLE `accounts` (
-  `Id` int(10) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(50) NOT NULL,
   `Balance` decimal(10,2) NOT NULL,
   `Owned` tinyint(3) unsigned NOT NULL,
-  `SubGroupId` int(10) NOT NULL,
   `Order` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-CREATE TABLE `accountsubgroups` (
-  `Id` int(10) NOT NULL AUTO_INCREMENT,
-  `GroupId` int(10) NOT NULL,
-  `Name` varchar(50) NOT NULL,
-  `Order` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`Id`),
-  KEY `AccountGroupId` (`GroupId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 CREATE TABLE `budgets` (
@@ -187,9 +170,6 @@ CREATE TABLE `transactions` (
   KEY `AccountId` (`AccountId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
-ALTER TABLE `accountsubgroups`
-  ADD CONSTRAINT `accountsubgroups_ibfk_1` FOREIGN KEY (`GroupId`) REFERENCES `accountgroups` (`Id`);
 
 ALTER TABLE `budgets`
   ADD CONSTRAINT `budgets_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `categories` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE;

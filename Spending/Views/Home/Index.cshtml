@@ -1,66 +1,46 @@
 ﻿@model HomeModel
 
 @{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Overview";
 }
 
 @section head
 {
 	<style type="text/css">
-		#body { width: 90%; }
-		#categories { width: 790px; margin-left: auto; margin-right: auto; }
-		#body table { margin-left: auto; margin-right: auto; }
-		#body td { padding: 3px 5px; white-space: nowrap; }
+		#body { width: 100%; }
+		#body td { white-space: nowrap; }
 		#body tbody td { border-bottom: 1px solid #F2F2F2; }
 
-		#body td:nth-child(1) { width: 150px; }
-		#body td:nth-child(4) { width: 200px; text-align: left; }
-		#body td:nth-child(7) { width: 15px; text-align: center; }
-		#body td:nth-child(2),
-		#body td:nth-child(3),
-		#body td:nth-child(5),
-		#body td:nth-child(6),
-		#body td:nth-child(8) { width: 50px; text-align: right; }
-
-		#body td:nth-child(1),
-		#body td:nth-child(2),
-		#body td:nth-child(5) { border-right: 1px dashed #D0E0F0; }
-
-		#body td:nth-child(1),
-		#body td:nth-child(2),
-		#body td:nth-child(3),
-		#body td:nth-child(4),
-		#body td:nth-child(6) { padding-left: 15px; }
-
-		#body td:nth-child(1),
-		#body td:nth-child(2),
-		#body td:nth-child(5),
-		#body td:nth-child(8) { padding-right: 15px; }
-
-		#monthDiv
-		{
-		    width: 770px;
-		    margin: 0px auto 5px auto;
-		    background-color: #3B414C;
-		    padding: 10px;
-		    text-align: center;
-		    color: White;
-		}
+		#accounts { width: 333px; float: left; }
+		#accounts td:nth-child(1) { width: 150px; text-align: left;  padding: 3px  5px 3px 15px;  }
+		#accounts td:nth-child(2) { width:  65px; text-align: right; padding: 3px  5px 3px  5px;  }
+		#accounts td:nth-child(3) { width:  65px; text-align: right; padding: 3px 15px 3px  5px;  }
 		
-		#monthDiv span { font-weight: bold; color: #C6D3A0; }
-		#monthDiv h2 { color: White; margin: 0px 0px 5px; }
+		#categories { width: 783px; margin-left: 360px; }
+		#categories td:nth-child(1) { width: 150px; text-align: left;  padding: 3px 15px 3px 15px; border-right: 1px dashed #D0E0F0; }
+		#categories td:nth-child(2) { width:  50px; text-align: right; padding: 3px 15px 3px 15px; border-right: 1px dashed #D0E0F0; }
+		#categories td:nth-child(3) { width:  50px; text-align: right; padding: 3px  5px 3px 15px; }
+		#categories td:nth-child(4) { width: 200px; text-align: left;  padding: 3px  5px 3px 15px; }
+		#categories td:nth-child(5) { width:  50px; text-align: right; padding: 3px 15px 3px  5px; border-right: 1px dashed #D0E0F0; }
+		#categories td:nth-child(6) { width:  50px; text-align: right; padding: 3px  5px 3px 15px; }
+		#categories td:nth-child(7) { width:  15px; text-align: center; }
+		#categories td:nth-child(8) { width:  50px; text-align: right; padding: 3px 15px 3px  5px; }
 
-		#headingsTable td { border-color: #3377BB; background-color: #3377BB; color: White; }
-		#headingsTable tbody td { border-color: #3377BB; }
-		#headingsTable td:first-child { border-left: 1px solid #3377BB; }
-		#headingsTable td:last-child { border-right: 1px solid #3377BB; }
+		#body .heading { height: 50px; margin-bottom: 5px; background-color: #3B414C; padding: 10px; text-align: center; color: White; }
+		#body .heading h2 { color: White; margin: 0px 0px 5px; }
+		#body .heading span { font-weight: bold; color: #C6D3A0; }
 
-		#body .categoriesTable td:first-child { border-left: 1px solid #3377BB; }
-		#body .categoriesTable td:last-child { border-right: 1px solid #3377BB; }
-		#body .categoriesTable:first-child thead td { border-top: 1px solid #3377BB; }
-		#body .categoriesTable:last-child tbody tr:last-child td { border-bottom: 1px solid #3377BB; }
-		
-		#body .groupRow td
+		#body .headings td { border-color: #3377BB; background-color: #3377BB; color: White; }
+		#body .headings tbody td { border-color: #3377BB; }
+		#body .headings td:first-child { border-left: 1px solid #3377BB; }
+		#body .headings td:last-child { border-right: 1px solid #3377BB; }
+
+		#body .group td:first-child { border-left: 1px solid #3377BB; }
+		#body .group td:last-child { border-right: 1px solid #3377BB; }
+		#body .group:first-child thead td { border-top: 1px solid #3377BB; }
+		#body .group:last-child tbody tr:last-child td { border-bottom: 1px solid #3377BB; }
+
+		#body .group thead td
 		{
 		    background-color: #D0E0F0;
 		    padding-top: 5px;
@@ -69,70 +49,167 @@
 			border-bottom: 1px solid #C0D0E0;
 		}
 
-		#body .itemRow td { background-color: #FFFFFF; }
-		#body .itemRow:last-child td { border-bottom: none; }
+		#body .group tbody td { background-color: #FFFFFF; }
+		#body .group tbody tr:last-child td { border-bottom: none; }
 
 		#body .actionLnk { font-size: 0.85em; margin-left: 10px; float: right; color: rgba(0, 0, 0, 0.3); }
 		#body .actionLnk:hover { color: #FFFFFF; }
 	</style>
 }
 
-<div id="monthDiv">
-	<h2>@Model.Month.ToString("MMMM yyyy")</h2>
-	<div><span>@Model.Unassigned.ToCurrencyString()</span> Unassigned</div>
-</div>
-<table id="headingsTable">
-	<thead>
-		<tr>
-			<td></td>
-			<td>Starting</td>
-			<td>Budget</td>
-			<td>Spent</td>
-			<td>Left</td>
-			<td>Ending</td>
-			<td></td>
-			<td>Goal</td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr class="totalsRow">
-			<td>@Html.ActionLink("+ Group", "Create", "CategoryGroups", new { @class = "actionLnk" })</td>
-			<td>@Model.Starting.ToCurrencyString()</td>
-			<td>@Model.Budget.ToCurrencyString()</td>
-			<td>
-				<div class="meter@(Model.SpentPercent > 90 ? " end" : "")">
-					<span style="width: @Model.SpentPercent%"><span>@Model.Spent.ToCurrencyString()</span></span>
-				</div>
-			</td>
-			<td>@Model.Left.ToCurrencyString()</td>
-			<td>@Model.Ending.ToCurrencyString()</td>
-			<td></td>
-			<td>@Model.Goal.ToCurrencyString()</td>
-		</tr>
-	</tbody>
-</table>
-<div id="categories">
-	@foreach (var group in Model.Groups)
-	{
-		<table class="categoriesTable" groupId="@group.Id">
+<div id="accounts">
+	<div class="heading">
+		<h2>Accounts</h2>
+	</div>
+	<table class="headings">
+		<thead>
+			<tr>
+				<td></td>
+				<td>Starting</td>
+				<td>Ending</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td></td>
+				<td>@Model.AccountsInfo.Starting.ToCurrencyString()</td>
+				<td>@Model.AccountsInfo.Ending.ToCurrencyString()</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="groups">
+		<table class="group">
 			<thead>
-				@Html.Partial("GroupHeaderRow", group)
+				<tr>
+					<td>Owned</td>
+					<td>@Model.AccountsInfo.OwnedAccounts.Starting.ToCurrencyString()</td>
+					<td>@Model.AccountsInfo.OwnedAccounts.Ending.ToCurrencyString()</td>
+				</tr>
 			</thead>
 			<tbody>
-   				@foreach (var item in group.Items)
+				@foreach (var item in Model.AccountsInfo.OwnedAccounts.Items)
 				{
-					@Html.Partial("CategoryRow", item)
+					<tr>
+						<td>@Html.ActionLink(item.Name, "Index", "Transactions", new { accountId = item.Id }, null)</td>
+						<td>@item.Starting.ToCurrencyString()</td>
+						<td>@item.Ending.ToCurrencyString()</td>
+					</tr>
 				}
 			</tbody>
 		</table>
-	}
+		<table class="group">
+			<thead>
+				<tr>
+					<td>Other</td>
+					<td>@Model.AccountsInfo.OtherAccounts.Starting.ToCurrencyString()</td>
+					<td>@Model.AccountsInfo.OtherAccounts.Ending.ToCurrencyString()</td>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.AccountsInfo.OtherAccounts.Items)
+				{
+					<tr>
+						<td>@Html.ActionLink(item.Name, "Index", "Transactions", new { accountId = item.Id }, null)</td>
+						<td>@item.Starting.ToCurrencyString()</td>
+						<td>@item.Ending.ToCurrencyString()</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+<div id="categories">
+	<div class="heading">
+		<h2>@Model.Month.ToString("MMMM yyyy")</h2>
+		<div><span>@Model.CategoriesInfo.Unassigned.ToCurrencyString()</span> Unassigned</div>
+	</div>
+	<table class="headings">
+		<thead>
+			<tr>
+				<td></td>
+				<td>Starting</td>
+				<td>Budget</td>
+				<td>Spent</td>
+				<td>Left</td>
+				<td>Ending</td>
+				<td></td>
+				<td>Goal</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>@Html.ActionLink("+ Group", "Create", "CategoryGroups", new { @class = "actionLnk" })</td>
+				<td>@Model.CategoriesInfo.Starting.ToCurrencyString()</td>
+				<td>@Model.CategoriesInfo.Budget.ToCurrencyString()</td>
+				<td>
+					<div class="meter@(Model.CategoriesInfo.SpentPercent > 90 ? " end" : "")">
+						<span style="width: @Model.CategoriesInfo.SpentPercent%"><span>@Model.CategoriesInfo.Spent.ToCurrencyString()</span></span>
+					</div>
+				</td>
+				<td>@Model.CategoriesInfo.Left.ToCurrencyString()</td>
+				<td>@Model.CategoriesInfo.Ending.ToCurrencyString()</td>
+				<td></td>
+				<td>@Model.CategoriesInfo.Goal.ToCurrencyString()</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="groups">
+		@foreach (var group in Model.CategoriesInfo.Groups)
+		{
+			<table class="group" groupId="@group.Id">
+				<thead>
+					<tr>
+						<td>
+							@Html.ActionLink(group.Name, "Edit", "CategoryGroups", new { id = group.Id }, null)
+							@Html.ActionLink("+ Cat", "Create", "Categories", new { groupId = group.Id }, new { @class = "actionLnk" })
+						</td>
+						<td>@group.Starting.ToCurrencyString()</td>
+						<td>@group.Budget.ToCurrencyString()</td>
+						<td>
+							<div class="meter@(group.SpentPercent > 90 ? " end" : "")">
+								<span style="width: @group.SpentPercent%"><span>@group.Spent.ToCurrencyString()</span></span>
+							</div>
+						</td>
+						<td>@group.Left.ToCurrencyString()</td>
+						<td>@group.Ending.ToCurrencyString()</td>
+						<td></td>
+						<td>@group.Goal.ToCurrencyString()</td>
+					</tr>
+				</thead>
+				<tbody>
+   					@foreach (var item in group.Items)
+					{
+						<tr categoryId="@item.Id">
+							<td>
+								@Html.ActionLink(item.Name, "Edit", "Categories", new { id = item.Id }, null)
+								<input type="hidden" value="@item.Id" />
+							</td>
+							<td>@item.Starting.ToCurrencyString()</td>
+							<td>@item.Budget.ToCurrencyString()</td>
+							<td>
+								<div class="meter@(item.Budget == 0 ? " zeroBudget" : "")">
+									<span class="@(item.SpentPercent == 0 ? "zeroPercent" : "")" style="width: @(item.Budget == 0 ? 0 : item.SpentPercent)%">
+										<span>@item.Spent.ToCurrencyString()</span>
+									</span>
+								</div>
+							</td>
+							<td>@item.Left.ToCurrencyString()</td>
+							<td>@item.Ending.ToCurrencyString()</td>
+							<td>@(item.Ending == item.Goal ? '=' : item.Ending < item.Goal ? '<' : '>')</td>
+							<td>@item.Goal.ToCurrencyString()</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
 </div>
 <script type="text/javascript">
 	var updateGroupOrderUrl = '@Html.Raw(Url.Action("UpdateOrder", "CategoryGroups", new { id = "ID", order = "ORDER" }))';
 	var updateOrderUrl = '@Html.Raw(Url.Action("UpdateOrder", "Categories", new { id = "ID", groupId = "GROUPID", order = "ORDER" }))';
 
 	$(function () {
-		$("#categories").sortable({
+		$("#categories .groups").sortable({
 			axis: "y",
 			update: function (event, ui) {
 				var item = ui.item.prev();
@@ -153,9 +230,9 @@
 			}
 		});
 
-		$("#categories table tbody").sortable({
+		$("#categories .groups table tbody").sortable({
 			axis: "y",
-			connectWith: "#categories table tbody",
+			connectWith: "#categories .groups table tbody",
 			update: function (event, ui) {
 				var item = ui.item.prev();
 				var order = 0;

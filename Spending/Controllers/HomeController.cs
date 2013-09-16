@@ -21,7 +21,45 @@ namespace Spending.Controllers
 
 				model.Month = user.Settings.Select(x => x.Month).First();
 
-				model.Unassigned = user.Accounts
+				model.AccountsInfo = new AccountsModel();
+				model.AccountsInfo.OwnedAccounts = new AccountGroupModel();
+
+				foreach (var item in user.Accounts.Where(x => x.Owned).OrderBy(x => x.Order).ToList())
+				{
+					var itemInfo = new AccountModel();
+					itemInfo.Id = item.Id;
+					itemInfo.Name = item.Name;
+					itemInfo.Starting = item.Balance;
+					var transactions = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
+					itemInfo.Ending = item.Balance + transactions;
+
+					model.AccountsInfo.OwnedAccounts.Items.Add(itemInfo);
+					model.AccountsInfo.OwnedAccounts.Starting += itemInfo.Starting;
+					model.AccountsInfo.OwnedAccounts.Ending += itemInfo.Ending;
+				}
+				
+				model.AccountsInfo.OtherAccounts = new AccountGroupModel();
+
+				foreach (var item in user.Accounts.Where(x => !x.Owned).OrderBy(x => x.Order).ToList())
+				{
+					var itemInfo = new AccountModel();
+					itemInfo.Id = item.Id;
+					itemInfo.Name = item.Name;
+					itemInfo.Starting = item.Balance;
+					var transactions = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
+					itemInfo.Ending = item.Balance + transactions;
+
+					model.AccountsInfo.OtherAccounts.Items.Add(itemInfo);
+					model.AccountsInfo.OtherAccounts.Starting += itemInfo.Starting;
+					model.AccountsInfo.OtherAccounts.Ending += itemInfo.Ending;
+				}
+
+				model.AccountsInfo.Starting += model.AccountsInfo.OwnedAccounts.Starting + model.AccountsInfo.OtherAccounts.Starting;
+				model.AccountsInfo.Ending += model.AccountsInfo.OwnedAccounts.Ending + model.AccountsInfo.OtherAccounts.Ending;
+
+				model.CategoriesInfo = new CategoriesModel();
+
+				model.CategoriesInfo.Unassigned = user.Accounts
 					.Where(x => x.Owned)
 					.SelectMany(x => x.Transactions)
 					.Where(x =>
@@ -32,7 +70,7 @@ namespace Spending.Controllers
 
 				foreach (var category in user.Categories.Where(x => x.Income).ToList())
 				{
-					model.Unassigned += category.Splits.Where(x => x.Amount > 0).Sum(x => x.Amount);
+					model.CategoriesInfo.Unassigned += category.Splits.Where(x => x.Amount > 0).Sum(x => x.Amount);
 				}
 
 				foreach (var group in user.CategoryGroups.OrderBy(x => x.Order).ToList())
@@ -138,20 +176,20 @@ namespace Spending.Controllers
 							Math.Min(100, (int)(groupInfo.Spent / groupInfo.Budget * 100));
 					}
 
-					model.Groups.Add(groupInfo);
+					model.CategoriesInfo.Groups.Add(groupInfo);
 
-					model.Starting += groupInfo.Starting;
-					model.Spent += groupInfo.Spent;
-					model.Budget += groupInfo.Budget;
-					model.Left += groupInfo.Left;
-					model.Ending += groupInfo.Ending;
-					model.Goal += groupInfo.Goal;
+					model.CategoriesInfo.Starting += groupInfo.Starting;
+					model.CategoriesInfo.Spent += groupInfo.Spent;
+					model.CategoriesInfo.Budget += groupInfo.Budget;
+					model.CategoriesInfo.Left += groupInfo.Left;
+					model.CategoriesInfo.Ending += groupInfo.Ending;
+					model.CategoriesInfo.Goal += groupInfo.Goal;
 
-					model.SpentPercent = model.Budget == 0 ? 100 :
-						Math.Min(100, (int)(model.Spent / model.Budget * 100));
+					model.CategoriesInfo.SpentPercent = model.CategoriesInfo.Budget == 0 ? 100 :
+						Math.Min(100, (int)(model.CategoriesInfo.Spent / model.CategoriesInfo.Budget * 100));
 				}
 
-				model.Unassigned -= model.Starting;
+				model.CategoriesInfo.Unassigned -= model.CategoriesInfo.Starting;
 			}
 
 			return View(model);

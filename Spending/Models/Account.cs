@@ -12,13 +12,13 @@ namespace Spending.Models
 		}
 
 		public int Id { get; set; }
+		public int UserId { get; set; }
 		public string Name { get; set; }
 		public decimal Balance { get; set; }
-		public int SubGroupId { get; set; }
 		public bool Owned { get; set; }
 		public int Order { get; set; }
 
-		public virtual AccountSubGroup SubGroup { get; set; }
+		public virtual User User { get; set; }
 		public virtual ICollection<Transaction> Transactions { get; set; }
 	}
 }

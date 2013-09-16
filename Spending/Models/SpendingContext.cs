@@ -15,8 +15,6 @@ namespace Spending.Models
 		}
 
 		public DbSet<Account> Accounts { get; set; }
-		public DbSet<AccountGroup> AccountGroups { get; set; }
-		public DbSet<AccountSubGroup> AccountSubGroups { get; set; }
 		public DbSet<Budget> Budgets { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<CategoryGroup> CategoryGroups { get; set; }
@@ -27,8 +25,7 @@ namespace Spending.Models
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<User>()
-				.ToTable("my_aspnet_users");
+			modelBuilder.Entity<User>().ToTable("my_aspnet_users");
 		}
 	}
 }

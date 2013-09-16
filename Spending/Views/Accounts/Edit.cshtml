@@ -35,13 +35,6 @@
 			</td>
 		</tr>
 		<tr>
-			<th>@Html.LabelFor(model => model.SubGroupId, "Group")</th>
-			<td>
-				@Html.DropDownListFor(model => model.SubGroupId, new SelectList(ViewBag.Groups, "Id", "Name", Model.SubGroupId))
-				@Html.ValidationMessageFor(model => model.SubGroupId)
-			</td>
-		</tr>
-		<tr>
 			<th>@Html.LabelFor(model => model.Balance)</th>
 			<td>
 				@Html.EditorFor(model => model.Balance)

@@ -7,12 +7,47 @@ namespace Spending.Models
 {
 	public class HomeModel
 	{
-		public HomeModel()
+		public DateTime Month { get; set; }
+		public AccountsModel AccountsInfo { get; set; }
+		public CategoriesModel CategoriesInfo { get; set; }
+	}
+
+	public class AccountsModel
+	{
+		public AccountGroupModel OwnedAccounts { get; set; }
+		public AccountGroupModel OtherAccounts { get; set; }
+		public decimal Starting { get; set; }
+		public decimal Ending { get; set; }
+	}
+
+	public class AccountGroupModel
+	{
+		public AccountGroupModel()
+		{
+			this.Items = new List<AccountModel>();
+		}
+
+		public int Id { get; set; }
+		public decimal Starting { get; set; }
+		public decimal Ending { get; set; }
+		public List<AccountModel> Items { get; set; }
+	}
+
+	public class AccountModel
+	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+		public decimal Starting { get; set; }
+		public decimal Ending { get; set; }
+	}
+
+	public class CategoriesModel
+	{
+		public CategoriesModel()
 		{
 			this.Groups = new List<CategoryGroupModel>();
 		}
 
-		public DateTime Month { get; set; }
 		public decimal Unassigned { get; set; }
 		public decimal Starting { get; set; }
 		public decimal Spent { get; set; }

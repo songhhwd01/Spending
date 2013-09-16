@@ -148,8 +148,6 @@
     <Compile Include="Controllers\BoaTransactionImporter.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\AccountSubGroupsController.cs" />
-    <Compile Include="Controllers\AccountGroupsController.cs" />
     <Compile Include="Controllers\CategoryGroupsController.cs" />
     <Compile Include="Controllers\BudgetsController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
@@ -160,19 +158,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Account.cs" />
-    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="ViewModels\AccountModels.cs" />
     <Compile Include="Models\Category.cs" />
-    <Compile Include="Models\AccountGroup.cs" />
-    <Compile Include="Models\AccountSubGroup.cs" />
     <Compile Include="Models\CategoryGroup.cs" />
-    <Compile Include="Models\CategoriesModels.cs" />
-    <Compile Include="Models\AccountsModels.cs" />
+    <Compile Include="ViewModels\CategoriesModels.cs" />
+    <Compile Include="ViewModels\AccountsModels.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Budget.cs" />
-    <Compile Include="Models\TransactionsModels.cs" />
+    <Compile Include="ViewModels\TransactionsModels.cs" />
     <Compile Include="Models\Split.cs" />
-    <Compile Include="Models\HomeModels.cs" />
+    <Compile Include="ViewModels\HomeModels.cs" />
     <Compile Include="Models\SpendingContext.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -293,9 +289,6 @@
     <Content Include="Views\Categories\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Accounts\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Accounts\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -308,18 +301,6 @@
     <Content Include="Views\CategoryGroups\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\AccountGroups\Create.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\AccountGroups\Edit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\AccountSubGroups\Create.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\AccountSubGroups\Edit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Transactions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -327,21 +308,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Transactions\Create.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\CategoryRow.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\GroupHeaderRow.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Accounts\AccountRow.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Accounts\GroupHeaderRow.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Accounts\SubGroupHeaderRow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Categories\CreateBudget.cshtml" />

@@ -12,90 +12,6 @@ namespace Spending.Controllers
 	{
 		private SpendingContext db = new SpendingContext();
 
-		public ActionResult Index()
-		{
-			var model = new AccountsIndexModel();
-
-			foreach (var group in db.AccountGroups.OrderBy(x => x.Order).ToList())
-			{
-				var groupInfo = new AccountGroupModel();
-				groupInfo.Id = group.Id;
-				groupInfo.Name = group.Name;
-
-				foreach (var subGroup in group.SubGroups.OrderBy(x => x.Order).ToList())
-				{
-					var subGroupInfo = new AccountSubGroupModel();
-					subGroupInfo.Id = subGroup.Id;
-					subGroupInfo.Name = subGroup.Name;
-
-					foreach (var item in subGroup.Accounts.OrderBy(x => x.Order).ToList())
-					{
-						var itemInfo = new AccountModel();
-						itemInfo.Id = item.Id;
-						itemInfo.Name = item.Name;
-						itemInfo.Starting = item.Balance;
-						var transactions = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
-						itemInfo.Ending = item.Balance + transactions;
-
-						subGroupInfo.Items.Add(itemInfo);
-
-						subGroupInfo.StartingTotal += itemInfo.Starting;
-						subGroupInfo.EndingTotal += itemInfo.Ending;
-					}
-
-					groupInfo.SubGroups.Add(subGroupInfo);
-
-					groupInfo.StartingTotal += subGroupInfo.StartingTotal;
-					groupInfo.EndingTotal += subGroupInfo.EndingTotal;
-				}
-
-				model.Groups.Add(groupInfo);
-
-				model.StartingTotal += groupInfo.StartingTotal;
-				model.EndingTotal += groupInfo.EndingTotal;
-			}
-
-			return View(model);
-		}
-
-		public ActionResult Details(int id)
-		{
-			var account = db.Accounts.Find(id);
-
-			if (account == null)
-			{
-				return HttpNotFound();
-			}
-
-			return View(account);
-		}
-
-		private Transaction FindBestMatch(BoaTransaction importedTransaction, IEnumerable<Transaction> transactions)
-		{
-			int bestLcs = -1;
-			Transaction bestMatch = null;
-
-			foreach (var transaction in transactions)
-			{
-				if (transaction.OriginalDescription == importedTransaction.Description)
-				{
-					bestMatch = transaction;
-					break;
-				}
-
-				int lcs = LongestCommonSubsequence(
-					transaction.Description.ToUpper(), importedTransaction.Description.ToUpper(), 0, 0);
-
-				if (lcs > bestLcs)
-				{
-					bestLcs = lcs;
-					bestMatch = transaction;
-				}
-			}
-
-			return bestMatch;
-		}
-
 		public ActionResult ImportTransactions(int id)
 		{
 			var account = db.Accounts.Find(id);
@@ -183,9 +99,9 @@ namespace Spending.Controllers
 			return RedirectToAction("Details", new { id = account.Id });
 		}
 
-		public ActionResult Create(int subGroupId)
+		public ActionResult Create(bool owned)
 		{
-			return View(new Account { SubGroupId = subGroupId });
+			return View(new Account { Owned = owned });
 		}
 
 		[HttpPost]
@@ -194,22 +110,6 @@ namespace Spending.Controllers
 			if (ModelState.IsValid)
 			{
 				db.Accounts.Add(account);
-
-				byte order = 0;
-
-				foreach (var item in db.AccountSubGroups.Find(account.SubGroupId).Accounts.OrderBy(x => x.Order))
-				{
-					if (order == account.Order)
-					{
-						order++;
-					}
-
-					if (item != account)
-					{
-						item.Order = order++;
-					}
-				}
-	
 				db.SaveChanges();
 
 				return RedirectToAction("Index");
@@ -227,12 +127,6 @@ namespace Spending.Controllers
 				return HttpNotFound();
 			}
 
-			this.ViewBag.Groups = db.AccountSubGroups
-				.OrderBy(x => x.Group.Order)
-				.ThenBy(x => x.Order)
-				.Select(x => new { Id = x.Id, Name = x.Group.Name + (x.Group.SubGroups.Count() > 1 ? " : " + x.Name : "")})
-				.ToList();
-
 			return View(account);
 		}
 
@@ -244,25 +138,9 @@ namespace Spending.Controllers
 				db.Accounts.Attach(account);
 				var entry = db.Entry(account);
 				entry.Property(x => x.Name).IsModified = true;
-				entry.Property(x => x.SubGroupId).IsModified = true;
 				entry.Property(x => x.Balance).IsModified = true;
 				entry.Property(x => x.Owned).IsModified = true;
 				entry.Property(x => x.Order).IsModified = true;
-
-				byte order = 0;
-
-				foreach (var item in db.AccountSubGroups.Find(account.SubGroupId).Accounts.OrderBy(x => x.Order))
-				{
-					if (order == account.Order)
-					{
-						order++;
-					}
-
-					if (item != account)
-					{
-						item.Order = order++;
-					}
-				}
 
 				db.SaveChanges();
 
@@ -286,6 +164,32 @@ namespace Spending.Controllers
 			db.SaveChanges();
 
 			return RedirectToAction("Index");
+		}
+
+		private Transaction FindBestMatch(BoaTransaction importedTransaction, IEnumerable<Transaction> transactions)
+		{
+			int bestLcs = -1;
+			Transaction bestMatch = null;
+
+			foreach (var transaction in transactions)
+			{
+				if (transaction.OriginalDescription == importedTransaction.Description)
+				{
+					bestMatch = transaction;
+					break;
+				}
+
+				int lcs = LongestCommonSubsequence(
+					transaction.Description.ToUpper(), importedTransaction.Description.ToUpper(), 0, 0);
+
+				if (lcs > bestLcs)
+				{
+					bestLcs = lcs;
+					bestMatch = transaction;
+				}
+			}
+
+			return bestMatch;
 		}
 
 		private static int LongestCommonSubsequence(string strA, string strB, int indexA, int indexB)
