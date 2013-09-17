@@ -21,12 +21,14 @@ namespace Spending.Controllers
 				return HttpNotFound();
 			}
 
+			var accountRefNum = db.Accounts.Where(x => x.BoaAccountRefNum != null).Select(x => x.BoaAccountRefNum).First();
+			var boaLogin = db.BoaLogins.First();
 			var answers = new Dictionary<string, string>();
-			answers.Add("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?", "xxxxxxxx");
-			answers.Add("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?", "xxxxxxxx");
-			answers.Add("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?", "xxxxxxxx");
+			answers.Add(boaLogin.Question1, boaLogin.Answer1);
+			answers.Add(boaLogin.Question2, boaLogin.Answer2);
+			answers.Add(boaLogin.Question3, boaLogin.Answer3);
 			var importedTransactions = BoaTransactionImporter.Import(
-				"xxxxxxxxxxxxxxxxxxxx@xxxxx.xxx", "xxxxxxxx", answers, true, DateTime.UtcNow.AddMonths(-1), DateTime.MaxValue);
+				boaLogin.UserName, boaLogin.Password, answers, accountRefNum, true, DateTime.UtcNow.AddMonths(-1), DateTime.MaxValue);
 
 			var uncategorized = db.Categories.Find(37);
 			var transactions = account.Transactions.Where(x => x.Date >= importedTransactions.Last().Date).ToList();

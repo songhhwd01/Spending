@@ -14,6 +14,20 @@ CREATE TABLE `accounts` (
   `Balance` decimal(10,2) NOT NULL,
   `Owned` tinyint(3) unsigned NOT NULL,
   `Order` tinyint(3) unsigned NOT NULL,
+  `BoaAccountRefNum` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+CREATE TABLE `boalogin` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `UserName` varchar(50) NOT NULL,
+  `Password` varchar(50) NOT NULL,
+  `Question1` varchar(150) NOT NULL,
+  `Answer1` varchar(150) NOT NULL,
+  `Question2` varchar(150) NOT NULL,
+  `Answer2` varchar(150) NOT NULL,
+  `Question3` varchar(150) NOT NULL,
+  `Answer3` varchar(150) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 

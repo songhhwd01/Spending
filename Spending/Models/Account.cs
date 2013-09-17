@@ -17,6 +17,7 @@ namespace Spending.Models
 		public decimal Balance { get; set; }
 		public bool Owned { get; set; }
 		public int Order { get; set; }
+		public string BoaAccountRefNum { get; set; }
 
 		public virtual User User { get; set; }
 		public virtual ICollection<Transaction> Transactions { get; set; }

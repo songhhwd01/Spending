@@ -19,6 +19,7 @@ namespace Spending
 			string userName,
 			string password,
 			Dictionary<string, string> answers,
+			string accountRefNum,
 			bool negate,
 			DateTime startDate,
 			DateTime endDate)
@@ -95,8 +96,7 @@ namespace Spending
 			//
 
 			var accountDetailsUrlBase = "/myaccounts/brain/redirect.go?source=overview&target=acctDetails&adx=";
-			var visaAdx = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-			response = Request(baseUrl + accountDetailsUrlBase + visaAdx, cookies, null);
+			response = Request(baseUrl + accountDetailsUrlBase + accountRefNum, cookies, null);
 
 			htmlDocument = GetHtmlDocument(response);
 
