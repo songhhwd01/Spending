@@ -66,7 +66,7 @@
 			<tr>
 				<td></td>
 				<td>Starting</td>
-				<td>Ending</td>
+				<td>Current</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -79,34 +79,8 @@
 	</table>
 	<div class="groups">
 		<table class="group">
-			<thead>
-				<tr>
-					<td>Owned</td>
-					<td>@Model.AccountsInfo.OwnedAccounts.Starting.ToCurrencyString()</td>
-					<td>@Model.AccountsInfo.OwnedAccounts.Ending.ToCurrencyString()</td>
-				</tr>
-			</thead>
 			<tbody>
-				@foreach (var item in Model.AccountsInfo.OwnedAccounts.Items)
-				{
-					<tr>
-						<td>@Html.ActionLink(item.Name, "Index", "Transactions", new { accountId = item.Id }, null)</td>
-						<td>@item.Starting.ToCurrencyString()</td>
-						<td>@item.Ending.ToCurrencyString()</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-		<table class="group">
-			<thead>
-				<tr>
-					<td>Other</td>
-					<td>@Model.AccountsInfo.OtherAccounts.Starting.ToCurrencyString()</td>
-					<td>@Model.AccountsInfo.OtherAccounts.Ending.ToCurrencyString()</td>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var item in Model.AccountsInfo.OtherAccounts.Items)
+				@foreach (var item in Model.AccountsInfo.Accounts)
 				{
 					<tr>
 						<td>@Html.ActionLink(item.Name, "Index", "Transactions", new { accountId = item.Id }, null)</td>

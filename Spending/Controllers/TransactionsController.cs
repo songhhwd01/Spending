@@ -13,8 +13,11 @@ namespace Spending.Controllers
 	{
 		private SpendingContext db = new SpendingContext();
 
-		public ActionResult Index(int accountId, DateTime startDate, DateTime endDate, int transactionsPerPage, int page)
+		public ActionResult Index(int accountId = 0, DateTime? startDate = null, DateTime? endDate = null, int transactionsPerPage = 30, int page = 1)
 		{
+			startDate = startDate ?? DateTime.MinValue.Date;
+			endDate = endDate ?? DateTime.MaxValue.Date;
+
 			var model = new TransactionsIndexModel();
 
 			var transactions = db.Transactions
@@ -23,13 +26,13 @@ namespace Spending.Controllers
 
 			model.Transactions = transactions.Skip((page - 1) * transactionsPerPage).Take(transactionsPerPage).ToList();
 
-			if (accountId > 0 && startDate.Date == DateTime.MinValue.Date && endDate.Date == DateTime.MaxValue.Date)
+			if (accountId > 0 && startDate.Value.Date == DateTime.MinValue.Date && endDate.Value.Date == DateTime.MaxValue.Date)
 			{
 				model.Account = db.Accounts.Find(accountId);
 			}
 
-			model.StartDate = startDate;
-			model.EndDate = endDate;
+			model.StartDate = startDate.Value;
+			model.EndDate = endDate.Value;
 			model.TransactionsPerPage = transactionsPerPage;
 			model.Page = page;
 			model.LastPage = (int)Math.Ceiling(transactions.Count() / (double)transactionsPerPage);
@@ -71,7 +74,7 @@ namespace Spending.Controllers
 				}
 
 				db.SaveChanges();
-				return RedirectToAction("Details", "Accounts", new { id = model.AccountId });
+				return RedirectToAction("Index", new { accountId = model.AccountId });
 			}
 
 			this.ViewBag.Accounts = db.Accounts;

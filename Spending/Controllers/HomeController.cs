@@ -20,51 +20,31 @@ namespace Spending.Controllers
 				var user = db.Users.Find(Membership.GetUser().ProviderUserKey);
 
 				model.Month = user.Settings.Select(x => x.Month).First();
+				model.Month.AddDays(-model.Month.Day + 1);
 
 				model.AccountsInfo = new AccountsModel();
-				model.AccountsInfo.OwnedAccounts = new AccountGroupModel();
 
-				foreach (var item in user.Accounts.Where(x => x.Owned).OrderBy(x => x.Order).ToList())
+				foreach (var item in user.Accounts.OrderBy(x => x.Order).ToList())
 				{
 					var itemInfo = new AccountModel();
 					itemInfo.Id = item.Id;
 					itemInfo.Name = item.Name;
-					itemInfo.Starting = item.Balance;
-					var transactions = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
-					itemInfo.Ending = item.Balance + transactions;
+					itemInfo.Starting = item.Transactions.Where(x => !x.Pending && x.Date < model.Month).SelectMany(x => x.Splits).Sum(x => x.Amount);
+					itemInfo.Ending = itemInfo.Starting + item.Transactions
+						.Where(x => !x.Pending && x.Date >= model.Month && x.Date < model.Month.AddMonths(1))
+						.SelectMany(x => x.Splits)
+						.Sum(x => x.Amount);
 
-					model.AccountsInfo.OwnedAccounts.Items.Add(itemInfo);
-					model.AccountsInfo.OwnedAccounts.Starting += itemInfo.Starting;
-					model.AccountsInfo.OwnedAccounts.Ending += itemInfo.Ending;
+					model.AccountsInfo.Accounts.Add(itemInfo);
+					model.AccountsInfo.Starting += itemInfo.Starting;
+					model.AccountsInfo.Ending += itemInfo.Ending;
 				}
 				
-				model.AccountsInfo.OtherAccounts = new AccountGroupModel();
-
-				foreach (var item in user.Accounts.Where(x => !x.Owned).OrderBy(x => x.Order).ToList())
-				{
-					var itemInfo = new AccountModel();
-					itemInfo.Id = item.Id;
-					itemInfo.Name = item.Name;
-					itemInfo.Starting = item.Balance;
-					var transactions = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
-					itemInfo.Ending = item.Balance + transactions;
-
-					model.AccountsInfo.OtherAccounts.Items.Add(itemInfo);
-					model.AccountsInfo.OtherAccounts.Starting += itemInfo.Starting;
-					model.AccountsInfo.OtherAccounts.Ending += itemInfo.Ending;
-				}
-
-				model.AccountsInfo.Starting += model.AccountsInfo.OwnedAccounts.Starting + model.AccountsInfo.OtherAccounts.Starting;
-				model.AccountsInfo.Ending += model.AccountsInfo.OwnedAccounts.Ending + model.AccountsInfo.OtherAccounts.Ending;
-
 				model.CategoriesInfo = new CategoriesModel();
 
 				model.CategoriesInfo.Unassigned = user.Accounts
-					.Where(x => x.Owned)
 					.SelectMany(x => x.Transactions)
-					.Where(x =>
-						x.Date.Year < model.Month.Year ||
-						x.Date.Year == model.Month.Year && x.Date.Month < model.Month.Month)
+					.Where(x => x.Date < model.Month)
 					.SelectMany(x => x.Splits)
 					.Sum(x => x.Amount);
 

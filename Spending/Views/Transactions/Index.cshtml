@@ -31,8 +31,7 @@
 
 @{
 	var currencyFormat = "#,##0.00";
-	decimal balance = Model.Account == null ? 0 :
-		Model.Account.Balance + Model.Account.Transactions.SelectMany(x => x.Splits).Sum(x => x.Amount);
+	decimal balance = Model.Account == null ? 0 : Model.Account.Transactions.SelectMany(x => x.Splits).Sum(x => x.Amount);
 }
 
 <div class="transactions">

@@ -101,9 +101,9 @@ namespace Spending.Controllers
 			return RedirectToAction("Details", new { id = account.Id });
 		}
 
-		public ActionResult Create(bool owned)
+		public ActionResult Create()
 		{
-			return View(new Account { Owned = owned });
+			return View(new Account());
 		}
 
 		[HttpPost]
@@ -140,9 +140,6 @@ namespace Spending.Controllers
 				db.Accounts.Attach(account);
 				var entry = db.Entry(account);
 				entry.Property(x => x.Name).IsModified = true;
-				entry.Property(x => x.Balance).IsModified = true;
-				entry.Property(x => x.Owned).IsModified = true;
-				entry.Property(x => x.Order).IsModified = true;
 
 				db.SaveChanges();
 

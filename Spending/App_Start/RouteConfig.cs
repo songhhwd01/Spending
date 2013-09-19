@@ -14,12 +14,6 @@ namespace Spending
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-				name: "Transactions",
-				url: "Transactions",
-				defaults: new { controller = "Transactions", action = "Index", startDate = DateTime.MinValue.Date,
-					endDate = DateTime.MaxValue.Date, transactionsPerPage = 30, page = 1 }
-			);
-            routes.MapRoute(
 				name: "Default",
 				url: "{controller}/{action}/{id}",
 				defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

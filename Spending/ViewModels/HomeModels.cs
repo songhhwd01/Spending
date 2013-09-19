@@ -14,23 +14,14 @@ namespace Spending.Models
 
 	public class AccountsModel
 	{
-		public AccountGroupModel OwnedAccounts { get; set; }
-		public AccountGroupModel OtherAccounts { get; set; }
-		public decimal Starting { get; set; }
-		public decimal Ending { get; set; }
-	}
-
-	public class AccountGroupModel
-	{
-		public AccountGroupModel()
+		public AccountsModel()
 		{
-			this.Items = new List<AccountModel>();
+			this.Accounts = new List<AccountModel>();
 		}
 
-		public int Id { get; set; }
+		public List<AccountModel> Accounts { get; set; }
 		public decimal Starting { get; set; }
 		public decimal Ending { get; set; }
-		public List<AccountModel> Items { get; set; }
 	}
 
 	public class AccountModel

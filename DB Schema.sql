@@ -11,8 +11,6 @@ CREATE TABLE `accounts` (
   `Id` int(10) NOT NULL AUTO_INCREMENT,
   `UserId` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL,
-  `Balance` decimal(10,2) NOT NULL,
-  `Owned` tinyint(3) unsigned NOT NULL,
   `Order` tinyint(3) unsigned NOT NULL,
   `BoaAccountRefNum` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Id`)
