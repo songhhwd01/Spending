@@ -7,16 +7,19 @@
 @section head
 {
 	<style type="text/css">
-		#body { width: 100%; }
 		#body td { white-space: nowrap; }
 		#body tbody td { border-bottom: 1px solid #F2F2F2; }
 
-		#accounts { width: 333px; float: left; }
-		#accounts td:nth-child(1) { width: 150px; text-align: left;  padding: 3px  5px 3px 15px;  }
-		#accounts td:nth-child(2) { width:  65px; text-align: right; padding: 3px  5px 3px  5px;  }
-		#accounts td:nth-child(3) { width:  65px; text-align: right; padding: 3px 15px 3px  5px;  }
+		#leftColumn { width: 225px; float: left; }
 		
-		#categories { width: 783px; margin-left: 360px; }
+		#accounts thead td { }
+		#accounts thead h2 { margin: 0px; padding: 0px; }
+		#accounts tbody td { border-bottom: 3px solid #E1ECF7; background-color: #BCD3E9; }
+		#accounts td:nth-child(1) { width: 118px; text-align: left;  padding: 8px  5px 8px 15px; }
+		#accounts td:nth-child(2) { width:  65px; text-align: right; padding: 8px 15px 8px  5px; }
+		
+		#categories { margin-left: 240px; }
+		#categories table { width: 100%; }
 		#categories td:nth-child(1) { width: 150px; text-align: left;  padding: 3px 15px 3px 15px; border-right: 1px dashed #D0E0F0; }
 		#categories td:nth-child(2) { width:  50px; text-align: right; padding: 3px 15px 3px 15px; border-right: 1px dashed #D0E0F0; }
 		#categories td:nth-child(3) { width:  50px; text-align: right; padding: 3px  5px 3px 15px; }
@@ -26,27 +29,27 @@
 		#categories td:nth-child(7) { width:  15px; text-align: center; }
 		#categories td:nth-child(8) { width:  50px; text-align: right; padding: 3px 15px 3px  5px; }
 
-		#body .heading { height: 50px; margin-bottom: 5px; background-color: #3B414C; padding: 10px; text-align: center; color: White; }
+		#body .heading { margin-bottom: 5px; background-color: #3B414C; padding: 10px; text-align: center; color: White; }
 		#body .heading h2 { color: White; margin: 0px 0px 5px; }
 		#body .heading span { font-weight: bold; color: #C6D3A0; }
 
-		#body .headings td { border-color: #3377BB; background-color: #3377BB; color: White; }
-		#body .headings tbody td { border-color: #3377BB; }
-		#body .headings td:first-child { border-left: 1px solid #3377BB; }
-		#body .headings td:last-child { border-right: 1px solid #3377BB; }
+		#body .headings td { border-color: #5D8BBA; background-color: #5D8BBA; color: White; }
+		#body .headings tbody td { border-color: #5D8BBA; }
+		#body .headings td:first-child { border-left: 1px solid #5D8BBA; }
+		#body .headings td:last-child { border-right: 1px solid #5D8BBA; }
 
-		#body .group td:first-child { border-left: 1px solid #3377BB; }
-		#body .group td:last-child { border-right: 1px solid #3377BB; }
-		#body .group:first-child thead td { border-top: 1px solid #3377BB; }
-		#body .group:last-child tbody tr:last-child td { border-bottom: 1px solid #3377BB; }
+		#body .group td:first-child { border-left: 1px solid #5D8BBA; }
+		#body .group td:last-child { border-right: 1px solid #5D8BBA; }
+		#body .group:first-child thead td { border-top: 1px solid #5D8BBA; }
+		#body .group:last-child tbody tr:last-child td { border-bottom: 1px solid #5D8BBA; }
 
 		#body .group thead td
 		{
-		    background-color: #D0E0F0;
+		    background-color: #BCD3E9;
 		    padding-top: 5px;
 		    padding-bottom: 5px;
-			border-top: 1px solid #C0D0E0;
-			border-bottom: 1px solid #C0D0E0;
+			border-top: 1px solid #ACC3D9;
+			border-bottom: 1px solid #ACC3D9;
 		}
 
 		#body .group tbody td { background-color: #FFFFFF; }
@@ -54,48 +57,26 @@
 
 		#body .actionLnk { font-size: 0.85em; margin-left: 10px; float: right; color: rgba(0, 0, 0, 0.3); }
 		#body .actionLnk:hover { color: #FFFFFF; }
+		
+		#prevMonth { float: left; color: White; }
+		#nextMonth { float: right; color: White; }
 	</style>
 }
 
-<div id="accounts">
-	<div class="heading">
-		<h2>Accounts</h2>
-	</div>
-	<table class="headings">
-		<thead>
-			<tr>
-				<td></td>
-				<td>Starting</td>
-				<td>Current</td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td></td>
-				<td>@Model.AccountsInfo.Starting.ToCurrencyString()</td>
-				<td>@Model.AccountsInfo.Ending.ToCurrencyString()</td>
-			</tr>
-		</tbody>
-	</table>
-	<div class="groups">
-		<table class="group">
-			<tbody>
-				@foreach (var item in Model.AccountsInfo.Accounts)
-				{
-					<tr>
-						<td>@Html.ActionLink(item.Name, "Index", "Transactions", new { accountId = item.Id }, null)</td>
-						<td>@item.Starting.ToCurrencyString()</td>
-						<td>@item.Ending.ToCurrencyString()</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+@{
+	var prevMonth = Model.Month.AddMonths(-1);
+	var nextMonth = Model.Month.AddMonths(1);
+}
+
+<div id="leftColumn">
+	@Html.Partial("_Accounts", Model.AccountsInfo)
 </div>
 <div id="categories">
 	<div class="heading">
+		<div>@Html.ActionLink("Previous", "Index", new { year = prevMonth.Year, month = prevMonth.Month }, new { id = "prevMonth" })</div>
+		<div>@Html.ActionLink("Next", "Index", new { year = nextMonth.Year, month = nextMonth.Month }, new { id = "nextMonth" })</div>
 		<h2>@Model.Month.ToString("MMMM yyyy")</h2>
-		<div><span>@Model.CategoriesInfo.Unassigned.ToCurrencyString()</span> Unassigned</div>
+		<span>@Model.CategoriesInfo.Unassigned.ToCurrencyString()</span> Unassigned
 	</div>
 	<table class="headings">
 		<thead>
@@ -112,7 +93,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td>@Html.ActionLink("+ Group", "Create", "CategoryGroups", new { @class = "actionLnk" })</td>
+				<td>@Html.ActionLink("+ Group", "Create", "CategoryGroups", null, new { @class = "actionLnk" })</td>
 				<td>@Model.CategoriesInfo.Starting.ToCurrencyString()</td>
 				<td>@Model.CategoriesInfo.Budget.ToCurrencyString()</td>
 				<td>
@@ -169,7 +150,11 @@
 							</td>
 							<td>@item.Left.ToCurrencyString()</td>
 							<td>@item.Ending.ToCurrencyString()</td>
-							<td>@(item.Ending == item.Goal ? '=' : item.Ending < item.Goal ? '<' : '>')</td>
+							<td>
+								<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+									<path d="M7 1 L2 4 L7 7" stroke="#FF6360" stroke-width="2" stroke-linecap="round" fill="none" />
+								</svg>
+							</td>
 							<td>@item.Goal.ToCurrencyString()</td>
 						</tr>
 					}

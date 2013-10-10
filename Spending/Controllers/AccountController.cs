@@ -11,77 +11,51 @@ namespace Spending.Controllers
 {
 	public class AccountController : Controller
 	{
-		public ActionResult LogOn()
+		[AllowAnonymous]
+		public ActionResult Unlock()
 		{
+			this.ViewBag.IncorrectCode = false;
 			return View();
 		}
 
+		[AllowAnonymous]
 		[HttpPost]
-		public ActionResult LogOn(AccountLogOnModel model, string returnUrl)
+		public ActionResult Unlock(int code)
 		{
-			if (ModelState.IsValid)
+			using (var db = new SpendingContext())
 			{
-				if (Membership.ValidateUser(model.UserName, model.Password))
-				{
-					FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
+				var storedCode = db.Settings.Select(x => x.Code).First();
 
-					if (Url.IsLocalUrl(returnUrl) &&
-						returnUrl.Length > 1 &&
-						returnUrl.StartsWith("/") &&
-						!returnUrl.StartsWith("//") &&
-						!returnUrl.StartsWith("/\\"))
-					{
-						return Redirect(returnUrl);
-					}
+				if (code == storedCode)
+				{
+					db.Settings.First().Locked = false;
+					db.SaveChanges();
 
 					return RedirectToAction("Index", "Home");
 				}
-
-				ModelState.AddModelError("", "The user name or password provided is incorrect.");
 			}
 
-			return View(model);
-		}
-
-		public ActionResult LogOff()
-		{
-			FormsAuthentication.SignOut();
-
-			return RedirectToAction("Index", "Home");
-		}
-
-		public ActionResult Register()
-		{
+			this.ViewBag.IncorrectCode = true;
 			return View();
 		}
 
-		[HttpPost]
-		public ActionResult Register(AccountRegisterModel model)
+		public ActionResult Lock()
 		{
-			if (ModelState.IsValid)
+			using (var db = new SpendingContext())
 			{
-				MembershipCreateStatus createStatus;
-				Membership.CreateUser(model.UserName, model.Password, model.Email, null, null, true, null, out createStatus);
+				var settings = db.Settings.First();
+				settings.Locked = true;
+				db.SaveChanges();
 
-				if (createStatus == MembershipCreateStatus.Success)
-				{
-					FormsAuthentication.SetAuthCookie(model.UserName, false);
-					return RedirectToAction("Index", "Home");
-				}
-
-				ModelState.AddModelError("", ErrorCodeToString(createStatus));
+				return RedirectToAction("Unlock");
 			}
-
-			return View(model);
 		}
 
-		[Authorize]
 		public ActionResult ChangePassword()
 		{
 			return View();
 		}
 
-		[Authorize]
 		[HttpPost]
 		public ActionResult ChangePassword(AccountChangePasswordModel model)
 		{

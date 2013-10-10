@@ -1,0 +1,67 @@
+﻿@model BoaLoginsEditModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section head
+{
+	<style type="text/css">
+		#body { padding: 15px; }
+		
+		#leftColumn { width: 225px; float: left; }
+		
+		#accounts thead td { }
+		#accounts thead h2 { margin: 0px; padding: 0px; }
+		#accounts tbody td { border-bottom: 3px solid #E1ECF7; background-color: #BCD3E9; }
+		#accounts td:nth-child(1) { width: 118px; text-align: left;  padding: 8px  5px 8px 15px; }
+		#accounts td:nth-child(2) { width:  65px; text-align: right; padding: 8px 15px 8px  5px; }
+		
+		#transactions { margin-left: 240px; padding: 0px; border: 1px solid #5D8BBA; background-color: White; }
+		#transactions > div { padding: 10px; color: White; background-color: #5D8BBA; }
+		#transactions > div h2 { margin: 0px; color: White; }
+		#transactions > div a { color: White; }
+		#transactions > table { width: 100%; }
+		#transactions > table > tfoot > tr > td,
+		#transactions > table > thead > tr > td,
+		#transactions > table > tbody > tr > td { padding: 5px; white-space: nowrap; border: 1px solid #F2F2F2; }
+		#transactions > table > tfoot > tr > td { border-color: #F8F9FD; background-color: #F8F9FD; border-top: 1px double #D8D9DD; }
+		#transactions > table > thead > tr > td { border-color: #BCD3E9; background-color: #BCD3E9; }
+		#transactions > table > tfoot > tr > td > a { }
+		#transactions > table > tbody > .itemRow:nth-child(odd) { background-color: #F8F9FD; }
+		#transactions > table > tbody > .itemRow:nth-child(even) { background-color: #FFFFFF; }
+
+		#transactions > table > tbody > tr > td { vertical-align: top; }
+		#transactions > table > thead > tr > td:nth-child(1),
+		#transactions > table > tbody > tr > td:nth-child(1) { text-align: center; }
+		#transactions > table > tbody > tr > td:nth-child(2)  
+		{
+			max-width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		#transactions > table > thead > tr > td:nth-child(3),
+		#transactions > table > tbody > tr > td:nth-child(3) { padding: 0px; }
+		#transactions > table > thead > tr > td:nth-child(4),
+		#transactions > table > tbody > tr > td:nth-child(4),
+		#transactions > table > thead > tr > td.balanceCol,
+		#transactions > table > tbody > tr > td.balanceCol { text-align: right; }
+		
+		.splitsTable { width: 100%; }
+		.splitsTable td { padding: 5px; }
+		.splitsTable td:nth-child(1) { width: 150px; }
+		.splitsTable td:nth-child(3) { width: 50px; text-align: right; }
+		
+		.itemRow .splitsTable td:nth-child(2),
+		.itemRow .splitsTable td:nth-child(3) { border-left: 1px solid #F2F2F2; }
+		
+		tfoot td { text-align: center; }
+	</style>
+}
+
+<div id="leftColumn">
+	@Html.Partial("Accounts", Model.AccountsInfo)
+</div>
+<div id="transactions">
+	User Name: @Model.BoaLogin.UserName
+</div>

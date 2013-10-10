@@ -13,6 +13,11 @@ body
     padding: 0;
 }
 
+#body
+{
+    padding: 15px;
+}
+
 input
 {
     font-size: 1em;
@@ -24,7 +29,6 @@ table
     border-spacing: 0;
 }
 
-#body { padding: 30px; }
 a { text-decoration: none; color: Black; }
 
 header, footer, hgroup, nav, section
@@ -35,7 +39,7 @@ header, footer, hgroup, nav, section
 header
 {
     padding: 20px 20px 5px 20px;
-    background-color: #3377BB;
+    background-color: #3D5B7A;
 }
 
 mark
@@ -63,10 +67,15 @@ h5 a:link, h5 a:visited, h5 a:active
     text-decoration: none;
 }
 
-#login
+#lock
 {
     float: right;
     font-size: .85em;
+}
+
+header a
+{
+    color: White;
 }
 
 ul#menu {
@@ -104,44 +113,6 @@ hgroup.title h1, hgroup.title h2 {
 hgroup.title h2 {
     font-weight: normal;
     margin-left: 3px;
-}
-
-/* login page */
-#loginForm {
-    border-right: solid 2px #c8c8c8;
-    float: left;
-    width: 55%;
-}
-
-#loginForm .validation-error {
-    display: block;
-    margin-left: 15px;
-}
-
-#loginForm .validation-summary-errors ul {
-    margin: 0;
-    padding: 0;
-}
-
-#loginForm .validation-summary-errors li {
-    display: inline;
-    list-style: none;
-    margin: 0;
-}
-
-#loginForm input {
-    width: 250px;
-}
-
-#loginForm input[type="checkbox"],
-#loginForm input[type="submit"],
-#loginForm input[type="button"],
-#loginForm button {
-    width: auto;
-}
-
-#logoutForm {
-    display: inline;
 }
 
 select
@@ -281,8 +252,7 @@ input[type="checkbox"].input-validation-error {
 	color: black;
 }
 
-body { background-color: #E0F0FC; }
-#body { width: 900px; margin-left: auto; margin-right: auto; }
+body { background-color: #E1ECF7; }
 .styledTable { width: 100%; border: 2px solid #3377BB; border-top: none; }
 .styledTable > tfoot > tr > td,
 .styledTable > thead > tr > td,

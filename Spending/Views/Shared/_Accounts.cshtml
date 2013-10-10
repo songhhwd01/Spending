@@ -1,0 +1,23 @@
+﻿@model Spending.ViewModels.AccountsModel
+
+<div id="accounts">
+	<table>
+		<thead>
+			<tr>
+				<td class="accntsNameCol"><h2>Accounts</h2></td>
+				<td class="accntsBalCol">@Model.Ending.ToCurrencyString()</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Accounts)
+			{
+				<tr>
+					<td class="accntsNameCol">@Html.ActionLink(item.Name, "Index", "Transactions", new { accountId = item.Id }, null)</td>
+					<td class="accntsBalCol">@item.Ending.ToCurrencyString()</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<p>@Html.ActionLink("Import Transactions", "ImportTransactions", "Accounts")</p>
+	<p>@Html.ActionLink("Bank of America Login Settings", "Edit", "BoaLogins")</p>
+</div>

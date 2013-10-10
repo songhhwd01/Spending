@@ -9,7 +9,6 @@ using Spending.Models;
 
 namespace Spending.Controllers
 {
-	[Authorize]
 	public class CategoriesController : Controller
 	{
 		private SpendingContext db = new SpendingContext();
@@ -72,8 +71,6 @@ namespace Spending.Controllers
 
 		public ActionResult Create()
 		{
-			this.ViewBag.Groups = db.CategoryGroups;
-
 			EditCategoryModel model = new EditCategoryModel();
 			model.NewBudgets.Add(new EditBudgetModel());
 			return View(model);
@@ -120,9 +117,7 @@ namespace Spending.Controllers
 				return HttpNotFound();
 			}
 
-			var user = db.Users.Find(Membership.GetUser().ProviderUserKey);
-
-			var currentMonth = user.Settings.Select(x => x.Month).First();
+			var currentMonth = db.Settings.Select(x => x.Month).First();
 
 			EditCategoryModel model = new EditCategoryModel();
 			model.Id = category.Id;

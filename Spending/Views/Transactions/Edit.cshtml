@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Edit";
+	ViewBag.SubmitCaption = "Save";
 }
 
 @section head
@@ -29,119 +30,15 @@
 		    padding-left: 10px;
 		    text-align: center;
 		}
-		form:nth-child(1) { float: right; padding-bottom: 15px; }
-		form:nth-child(1) input { margin-right: 0px; }
 	</style>
 }
+
+@Html.Partial("_Form")
 
 @using (Html.BeginForm("Delete", "Transactions", new { id = Model.Id, accountId = Model.AccountId }))
 {
 	<input type="submit" value="Delete" />
 }
-
-@using (Html.BeginForm())
-{
-    @Html.ValidationSummary(true)
-	@Html.HiddenFor(model => model.AccountId);
-										  
-	<table id="fieldsTable">
-		<tr>
-			<td colspan="2">Edit Transaction</td>
-		</tr>
-		<tr>
-			<td>@Html.LabelFor(model => model.Date)</td>
-			<td>
-				@Html.EditorFor(model => model.Date)
-				@Html.ValidationMessageFor(model => model.Date)
-			</td>
-		</tr>
-		<tr>
-			<td>@Html.LabelFor(model => model.Description)</td>
-			<td>
-				@Html.EditorFor(model => model.Description)
-				@Model.OriginalDescription
-				@Html.ValidationMessageFor(model => model.Description)
-			</td>
-		</tr>
-		<tr>
-			<td>
-				@Html.LabelFor(model => model.Pending)
-			</td>
-			<td>
-				@Html.EditorFor(model => model.Pending)
-				@Html.ValidationMessageFor(model => model.Pending)
-			</td>
-		</tr>
-	</table>
-	<table id="splitsTable" class="styledTable">
-		<thead>
-			<tr>
-				<td>Splits</td>
-				<td colspan="3">@Html.ActionLink("Add Split", "CreateSplit", null, new { id = "addLink", @class = "actionLnk" })</td>
-			</tr>
-			<tr>
-				<td>Category</td>
-				<td>Notes</td>
-				<td>Amount</td>
-				<td>Delete</td>
-			</tr>
-		</thead>
-		<tbody>
-			@for (int i = 0; i < Model.Splits.Count; i++)
-			{
-				<tr class="itemRow">
-					<td>
-						@Html.HiddenFor(model => model.Splits[i].Id)
-						@Html.DropDownListFor(model => model.Splits[i].CategoryId,
-							new SelectList(ViewBag.Categories, "Id", "Name", Model.Splits[i].CategoryId))
-						@Html.ValidationMessageFor(model => model.Splits[i].CategoryId)
-					</td>
-					<td>
-						@Html.TextBoxFor(model => model.Splits[i].Notes)
-					</td>
-					<td>
-						@Html.TextBoxFor(model => model.Splits[i].Amount)
-					</td>
-					<td>
-						@Html.CheckBoxFor(model => model.Splits[i].Delete)
-					</td>
-				</tr>
-			}
-
-			@for (int i = 0; i < Model.NewSplits.Count; i++)
-			{
-				var splitModel = new Spending.Models.CreateSplitModel();
-				splitModel.NewSplits.Add(i.ToString(), Model.NewSplits[i]);
-				@Html.Partial("CreateSplit", splitModel)
-			}
-		</tbody>
-	</table>
-
-	<p>
-		<input type="submit" value="Save" />
-		@Html.ActionLink("Cancel", "Details", "Accounts", new { id = Model.AccountId }, new { @class = "cancelLink" })
-	</p>
-}
-
-<script type="text/javascript">
-	$("#addLink").click(function ()
-	{
-		$.ajax(
-		{
-			url: this.href,
-			cache: false,
-			success: function (html) { $("#splitsTable").append(html); }
-		});
-
-		return false;
-	});
-
-	$("a.deleteRow").live("click", function ()
-	{
-		$(this).parents("tr:first").remove();
-		return false;
-	});
-</script>
 
 @section Scripts
 {

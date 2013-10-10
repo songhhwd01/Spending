@@ -13,12 +13,13 @@
     </head>
     <body>
         <header>
-            <section id="login">
-                @Html.Partial("_LogOnPartial")
+            <section id="lock">
+				@Html.ActionLink("Lock", "Lock", "Account")
             </section>
             <nav>
                 <ul id="menu">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Budget", "Index", "Home")</li>
+					<li>@Html.ActionLink("Transactions", "Index", "Transactions")</li>
                 </ul>
             </nav>
         </header>

@@ -7,64 +7,89 @@
 @section head
 {
 	<style type="text/css">
-		#body { width: 1000px; }
-		.transactions > table > tbody > tr > td { vertical-align: top; }
-		.transactions > table > tbody > tr > td:nth-child(1) { text-align: center; }
-		.transactions > table > tbody > tr > td:nth-child(2)  
+		#body { padding: 15px; }
+		
+		#sidebar { width: 225px; float: left; }
+		
+		#accounts thead td { }
+		#accounts thead h2 { margin: 0px; padding: 0px; }
+		#accounts tbody td { border-bottom: 3px solid #E1ECF7; background-color: #BCD3E9; }
+		.accntsNameCol { width: 118px; text-align: left;  padding: 8px  5px 8px 15px; }
+		.accntsBalCol { width:  65px; text-align: right; padding: 8px 15px 8px  5px; }
+		
+		#transactions { margin-left: 240px; padding: 0px; border: 1px solid #5D8BBA; background-color: White; }
+		#transactions > div { padding: 10px; color: White; background-color: #5D8BBA; }
+		#transactions > div h2 { margin: 0px; color: White; }
+		#transactions > div a { color: White; }
+		#transactionsTbl { width: 100%; }
+		#transactionsTbl td { vertical-align: top; white-space: nowrap; }
+		#transactionsTbl > thead > tr > td { border-color: #BCD3E9; background-color: #BCD3E9; }
+		#transactionsTbl > tbody > tr:nth-child(odd) { background-color: #F8F9FD; }
+		#transactionsTbl > tbody > tr:nth-child(even) { background-color: #FFFFFF; }
+
+		.transCol > * > tr > td { padding: 5px; border: 1px solid #F2F2F2; }
+
+		.dateCol { text-align: center; }
+		.descCol { }
+		.splitsCol { padding: 0px; }
+		.amtCol { text-align: right; }
+		.balanceCol { text-align: right; }
+		.stateCol { }
+		.cmdCol { }
+		
+		#transactionsTbl .dateCol { text-align: center; }
+		#transactionsTbl .descCol
 		{
 			max-width: 200px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-		.transactions > table > tbody > tr > td:nth-child(3) { padding: 0px; }
-		.transactions > table > tbody > tr > td:nth-child(4),
-		.transactions > table > tbody > tr > td.balanceCol { text-align: right; }
+		#transactions .splitsCol { padding: 0px; }
+		#transactions .amtCol,
+		#transactions .balanceCol { text-align: right; }
+		
 		.splitsTable { width: 100%; }
 		.splitsTable td { padding: 5px; }
-		.splitsTable td:nth-child(1) { width: 150px; }
-		.splitsTable td:nth-child(3) { width: 50px; text-align: right; }
-		.itemRow .splitsTable td:nth-child(2),
-		.itemRow .splitsTable td:nth-child(3) { border-left: 1px solid #F2F2F2; }
-		tfoot td { text-align: center; }
+		.splitsTable .categoryCol { width: 150px; }
+		.splitsTable .subAmtCol { width: 50px; text-align: right; }
+		
+		tbody tbody .notesCol, tbody tbody .subAmtCol { border-left: 1px solid #F2F2F2; }
+		
+		.pager { text-align: center; }
 	</style>
 }
 
 @{
-	var currencyFormat = "#,##0.00";
-	decimal balance = Model.Account == null ? 0 : Model.Account.Transactions.SelectMany(x => x.Splits).Sum(x => x.Amount);
+	var balance = Model.Account == null ? 0 : Model.Account.Transactions.SelectMany(x => x.Splits).Sum(x => x.Amount);
 }
 
-<div class="transactions">
-	<table class="styledTable">
+<div id="sidebar">
+	@Html.Partial("_Accounts", Model.AccountsInfo)
+</div>
+<div id="transactions">
+	<div>@Html.ActionLink("Create New", "Create")</div>
+	<table id="transactionsTbl">
 		<thead>
 			<tr>
-				<td colspan="2">@if (Model.Account != null) { @Model.Account.Name } Transactions</td>
-				<td colspan="@(Model.Account == null ? 3 : 4)">
-					@if (Model.Account != null)
-					{
-						@Html.ActionLink("Import", "Import", new { accountId = Model.Account.Id }, new { @class = "actionLnk" })
-						@Html.ActionLink("Create New", "Create", new { accountId = Model.Account.Id }, new { @class = "actionLnk" })
-					}
-				</td>
-			</tr>
-			<tr>
-				<td>Date</td>
-				<td>Payee</td>
-				<td>
+				<td class="dateCol">Date</td>
+				<td class="accntCol">Account</td>
+				<td class="descCol">Description</td>
+				<td class="splitsCol">
 					<table class="splitsTable">
 		  				<tr>
-							<td>Category</td>
-							<td>Notes</td>
-							<td>Split</td>
+							<td class="categoryCol">Category</td>
+							<td class="notesCol">Notes</td>
+							<td class="subAmtCol">Split</td>
 						</tr>
 					</table>
 				</td>
-				<td>Amount</td>
+				<td class="amtCol">Amount</td>
 				@if (Model.Account != null)
 				{
-					<td>Balance</td>
+					<td class="balanceCol">Balance</td>
 				}
-				<td></td>
+				<td class="stateCol">State</td>
+				<td class="cmdCol"></td>
 			</tr>
 		</thead>
 		<tbody>
@@ -78,142 +103,84 @@
 					transaction.ImportState == (int)ImportState.Matched ? "Matched" :
 					transaction.ImportState == (int)ImportState.Manual ? "Manual" : string.Empty;
 			
-				<tr class="itemRow">
-					<td>@date</td>
-					<td>@(transaction.Description == string.Empty ? transaction.OriginalDescription : transaction.Description)</td>
-					<td>
+				<tr>
+					<td class="dateCol">@date</td>
+					<td class="accntCol">@transaction.Account.Name</td>
+					<td class="descCol">@(transaction.Description == string.Empty ? transaction.OriginalDescription : transaction.Description)</td>
+					<td class="splitsCol">
 						<table class="splitsTable">
 							@foreach (var split in transaction.Splits)
 							{
 								<tr>
-									<td>@split.Category.Name</td>
-									<td>@split.Notes</td>
-									<td>
+									<td class="categoryCol">@split.Category.Name</td>
+									<td class="notesCol">@split.Notes</td>
+									<td class="subAmtCol">
 										@if (transaction.Splits.Count > 1)
 										{
-											@split.Amount.ToString(currencyFormat)
+											@split.Amount.ToCurrencyString()
 										}
 									</td>
 								</tr>
 							}
 						</table>
 					</td>
-					<td>@amount.ToString(currencyFormat)</td>
+					<td class="amtCol">@amount.ToCurrencyString()</td>
 					@if (Model.Account != null)
 					{
-						<td class="balanceCol">@balance.ToString(currencyFormat)</td>
+						<td class="balanceCol">@balance.ToCurrencyString()</td>
 					}
-					<td>
+					<td class="stateCol">@importState</td>
+					<td class="cmdCol">
 						@Html.ActionLink("Edit", "Edit", "Transactions", new { id = transaction.Id }, null)
-						@importState
 					</td>
 				</tr>
 	  
 				balance -= amount;
 			}
 		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="@(Model.Account == null ? 5 : 6)"">
-					@Html.ActionLink("<<", "Index",
-						new 
-						{
-							accountId = Model.Account == null ? 0 : Model.Account.Id,
-							startDate = Model.StartDate.ToUrlString(),
-							endDate = Model.EndDate.ToUrlString(),
-							transactionsPerPage = Model.TransactionsPerPage,
-							page = 1
-						})
-					@Html.ActionLink("<", "Index",
-						new 
-						{
-							accountId = Model.Account == null ? 0 : Model.Account.Id,
-							startDate = Model.StartDate.ToUrlString(),
-							endDate = Model.EndDate.ToUrlString(),
-							transactionsPerPage = Model.TransactionsPerPage,
-							page = Model.Page - 1
-						})
-					@Model.Page of @Model.LastPage
-					@Html.ActionLink(">", "Index",
-						new 
-						{
-							accountId = Model.Account == null ? 0 : Model.Account.Id,
-							startDate = Model.StartDate.ToUrlString(),
-							endDate = Model.EndDate.ToUrlString(),
-							transactionsPerPage = Model.TransactionsPerPage,
-							page = Model.Page + 1
-						})
-					@Html.ActionLink(">>", "Index",
-						new 
-						{
-							accountId = Model.Account == null ? 0 : Model.Account.Id,
-							startDate = Model.StartDate.ToUrlString(),
-							endDate = Model.EndDate.ToUrlString(),
-							transactionsPerPage = Model.TransactionsPerPage,
-							page = Model.LastPage
-						})
-				</td>
-			</tr>
-		</tfoot>
 	</table>
+	<div class="pager">
+		@Html.ActionLink("<<", "Index",
+			new 
+			{
+				accountId = Model.Account == null ? 0 : Model.Account.Id,
+				startDate = Model.StartDate.ToUrlString(),
+				endDate = Model.EndDate.ToUrlString(),
+				transactionsPerPage = Model.TransactionsPerPage,
+				page = 1
+			})
+		@Html.ActionLink("<", "Index",
+			new 
+			{
+				accountId = Model.Account == null ? 0 : Model.Account.Id,
+				startDate = Model.StartDate.ToUrlString(),
+				endDate = Model.EndDate.ToUrlString(),
+				transactionsPerPage = Model.TransactionsPerPage,
+				page = Model.Page - 1
+			})
+		@Model.Page of @Model.LastPage
+		@Html.ActionLink(">", "Index",
+			new 
+			{
+				accountId = Model.Account == null ? 0 : Model.Account.Id,
+				startDate = Model.StartDate.ToUrlString(),
+				endDate = Model.EndDate.ToUrlString(),
+				transactionsPerPage = Model.TransactionsPerPage,
+				page = Model.Page + 1
+			})
+		@Html.ActionLink(">>", "Index",
+			new 
+			{
+				accountId = Model.Account == null ? 0 : Model.Account.Id,
+				startDate = Model.StartDate.ToUrlString(),
+				endDate = Model.EndDate.ToUrlString(),
+				transactionsPerPage = Model.TransactionsPerPage,
+				page = Model.LastPage
+			})
+	</div>
 </div>
 
 <script type="text/javascript">
-	var updateOrderUrl = '@Html.Raw(Url.Action("UpdateDayOrder", "Transactions", new { id = "ID", dayOrder = "ORDER" }))';
-
-	$(function ()
-	{
-		var fixHelper = function (e, ui)
-		{
-			ui.children().each(function ()
-			{
-				$(this).width($(this).width());
-			});
-
-			return ui;
-		};
-
-		$("#transactions > table > tbody").sortable(
-		{
-			helper: fixHelper,
-			axis: "y",
-			stop: function (event, ui)
-			{
-				var day = ui.item.attr("day");
-				var prevItem = ui.item.prev();
-				var nextItem = ui.item.next();
-
-				if (day != prevItem.attr("day") && day != nextItem.attr("day"))
-				{
-					$("#transactions > table > tbody").sortable("cancel");
-				}
-			},
-			update: function (event, ui)
-			{
-				var currItem = ui.item;
-				var prevItem = ui.item.prev();
-				var nextItem = ui.item.next();
-				var newOrder = 0;
-
-				if (currItem.attr("dayOrder") < prevItem.attr("dayOrder"))
-				{
-					newOrder = prevItem.attr("dayOrder");
-				}
-				else
-				{
-					newOrder = nextItem.attr("dayOrder");
-				}
-
-				$.ajax(
-				{
-					type: "POST",
-					url: updateOrderUrl.replace("ID", ui.item.attr("transactionId")).replace("ORDER", newOrder)
-				});
-			}
-		});
-
-		$("#transactions > table > tbody").disableSelection();
-	});
 </script>
 
 @section Scripts

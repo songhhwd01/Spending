@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Edit";
+	ViewBag.SubmitCaption = "Save";
 }
 
 @section head
@@ -81,123 +82,14 @@
 	</style>
 }
 
-@using (Html.BeginForm())
-{
-    @Html.ValidationSummary(true)
-
-	@Html.HiddenFor(model => model.OriginalStartingBalance)
-
-	<table id="fieldsTable">
-		<tr>
-			<td>
-				@Html.LabelFor(model => model.Name)
-			</td>
-			<td>
-				@Html.EditorFor(model => model.Name)
-				@Html.ValidationMessageFor(model => model.Name)
-			</td>
-		</tr>
-		<tr>
-			<td>
-				@Html.LabelFor(model => model.StartingBalance, "Starting Balance")
-			</td>
-			<td>
-				@Html.EditorFor(model => model.StartingBalance)
-		        @Html.ValidationMessageFor(model => model.StartingBalance)
-			</td>
-		</tr>
-		<tr>
-			<td>
-				@Html.LabelFor(model => model.Budget)
-			</td>
-			<td>
-			    @Html.EditorFor(model => model.Budget)
-				@Html.CheckBoxFor(model => model.EstimateBudget)
-				@Html.LabelFor(model => model.EstimateBudget, "Use " + Model.EstimatedBudget.ToString("#,##0.00") + " estimate")
-		        @Html.ValidationMessageFor(model => model.Budget)
-			</td>
-		</tr>
-	</table>
-	
-	<div id="budgetsLabel">Budgets</div>
-	<table id="budgetsTable">
-		<tr>
-			<th>Amount</th>
-			<th>Starting Month</th>
-			<th>Frequency</th>
-			<th>Times</th>
-			<th>Notes</th>
-			<th>Delete?</th>
-		</tr>
-
-		@for (int i = 0; i < Model.Budgets.Count; i++)
-		{
-		<tr>
-			<td>
-				@Html.HiddenFor(model => model.Budgets[i].Id)
-				@Html.EditorFor(model => model.Budgets[i].Amount)
-			</td>
-			<td>
-				@Html.TextBoxFor(model => model.Budgets[i].StartingMonth, "{0:MM/dd/yyyy}")
-			</td>
-			<td>
-				@Html.EditorFor(model => model.Budgets[i].Frequency)
-			</td>
-			<td>
-				@Html.EditorFor(model => model.Budgets[i].Times)
-			</td>
-			<td>
-				@Html.EditorFor(model => model.Budgets[i].Notes)
-			</td>
-			<td>
-				@Html.CheckBoxFor(model => model.Budgets[i].Delete)
-			</td>
-		</tr>
-		}
-
-		@for (int i = 0; i < Model.NewBudgets.Count; i++)
-		{
-			var budgetModel = new Spending.Models.CreateBudgetModel();
-			budgetModel.NewBudgets.Add(i.ToString(), Model.NewBudgets[i]);
-			@Html.Partial("CreateBudget", budgetModel)
-		}
-	</table>
-
-	@Html.ActionLink("Add Budget", "CreateBudget", null, new { id = "addLink" })
-
-	<p>
-		<input type="submit" value="Save" />
-		@Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "cancelLink" })
-	</p>
-}
+@Html.Partial("_Form")
 
 @using (Html.BeginForm("Delete", "Categories", new { id = Model.Id }))
 {
 	<input type="submit" value="Delete" />
 }
 
-<script type="text/javascript">
-	$("#addLink").click(function ()
-	{
-		$.ajax(
-		{
-			url: this.href,
-			cache: false,
-			success: function (html) { $("#budgetsTable").append(html); }
-		});
-
-		return false;
-	});
-
-	$("a.deleteRow").live("click", function ()
-	{
-		$(this).parents("tr:first").remove();
-		return false;
-	});
-</script>
-
 @section Scripts
 {
     @Scripts.Render("~/bundles/jqueryval")
 }
-

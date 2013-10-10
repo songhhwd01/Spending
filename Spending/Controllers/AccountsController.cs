@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Spending.Models;
+using Spending.ViewModels;
 
 namespace Spending.Controllers
 {
@@ -12,93 +13,96 @@ namespace Spending.Controllers
 	{
 		private SpendingContext db = new SpendingContext();
 
-		public ActionResult ImportTransactions(int id)
+		public ActionResult ImportTransactions()
 		{
-			var account = db.Accounts.Find(id);
-
-			if (account == null)
-			{
-				return HttpNotFound();
-			}
-
-			var accountRefNum = db.Accounts.Where(x => x.BoaAccountRefNum != null).Select(x => x.BoaAccountRefNum).First();
 			var boaLogin = db.BoaLogins.First();
 			var answers = new Dictionary<string, string>();
 			answers.Add(boaLogin.Question1, boaLogin.Answer1);
 			answers.Add(boaLogin.Question2, boaLogin.Answer2);
 			answers.Add(boaLogin.Question3, boaLogin.Answer3);
-			var importedTransactions = BoaTransactionImporter.Import(
-				boaLogin.UserName, boaLogin.Password, answers, accountRefNum, true, DateTime.UtcNow.AddMonths(-1), DateTime.MaxValue);
 
 			var uncategorized = db.Categories.Find(37);
-			var transactions = account.Transactions.Where(x => x.Date >= importedTransactions.Last().Date).ToList();
-			int order = 0;
-			DateTime prevDate = DateTime.MinValue;
 
-			foreach (var importedTransaction in ((IEnumerable<BoaTransaction>)importedTransactions).Reverse())
+			foreach (var account in db.Accounts.Where(x => x.BoaAccountRefNum != string.Empty).ToArray())
 			{
-				if (importedTransaction.Date != prevDate)
-				{
-					prevDate = importedTransaction.Date;
-					order = 0;
-				}
+				var importedTransactions = BoaTransactionImporter.Import(
+					boaLogin.UserName,
+					boaLogin.Password,
+					answers,
+					account.BoaAccountRefNum,
+					account.Negate,
+					DateTime.UtcNow.AddMonths(-1),
+					DateTime.MaxValue);
 
-				var sameAmountTransactions = transactions
-					.Where(x => x.Splits.Sum(s => s.Amount) == importedTransaction.Amount);
-				var sameAmountAndDateTransactions = sameAmountTransactions
-					.Where(x => x.Pending ? importedTransaction.Pending : x.Date == importedTransaction.Date);
-				Transaction bestMatch = this.FindBestMatch(importedTransaction, sameAmountAndDateTransactions);
+				var transactions = account.Transactions.Where(x => x.Date >= importedTransactions.Last().Date).ToList();
+				int order = 0;
+				DateTime prevDate = DateTime.MinValue;
 
-				if (bestMatch == null)
+				foreach (var importedTransaction in ((IEnumerable<BoaTransaction>)importedTransactions).Reverse())
 				{
-					if (!importedTransaction.Pending)
+					if (importedTransaction.Date != prevDate)
 					{
-						var sameAmountAndPendingTransactions = sameAmountTransactions.Where(x => x.Pending);
+						prevDate = importedTransaction.Date;
+						order = 0;
+					}
 
-						if (sameAmountAndPendingTransactions.Count() == 1)
+					var sameAmountTransactions = transactions
+						.Where(x => x.Splits.Sum(s => s.Amount) == importedTransaction.Amount);
+					var sameAmountAndDateTransactions = sameAmountTransactions
+						.Where(x => x.Pending ? importedTransaction.Pending : x.Date == importedTransaction.Date);
+					Transaction bestMatch = this.FindBestMatch(importedTransaction, sameAmountAndDateTransactions);
+
+					if (bestMatch == null)
+					{
+						if (!importedTransaction.Pending)
 						{
-							bestMatch = sameAmountAndPendingTransactions.First();
-						}
-						else
-						{
-//							bestMatch = this.FindBestMatch(importedTransaction, sameAmountAndPendingTransactions);
+							var sameAmountAndPendingTransactions = sameAmountTransactions.Where(x => x.Pending);
+
+							if (sameAmountAndPendingTransactions.Count() == 1)
+							{
+								bestMatch = sameAmountAndPendingTransactions.First();
+							}
+							else
+							{
+//								bestMatch = this.FindBestMatch(importedTransaction, sameAmountAndPendingTransactions);
+							}
 						}
 					}
+
+					if (bestMatch == null)
+					{
+						var transaction = new Transaction();
+						transaction.ImportState = (int)ImportState.Added;
+						transaction.Pending = importedTransaction.Pending;
+						transaction.Date = importedTransaction.Date;
+						transaction.OriginalDescription = importedTransaction.Description;
+						transaction.DayOrder = order;
+						transaction.Splits.Add(new Split { Amount = importedTransaction.Amount, Category = uncategorized });
+						account.Transactions.Add(transaction);
+					}
+					else
+					{
+						bestMatch.ImportState = (int)ImportState.Matched;
+						bestMatch.OriginalDescription = importedTransaction.Description;
+						bestMatch.DayOrder = order;
+						transactions.Remove(bestMatch);
+					}
+
+					order++;
 				}
 
-				if (bestMatch == null)
+				// The rest of the transactions were not matched, so marking them as unreconciled
+				foreach (var transaction in transactions)
 				{
-					var transaction = new Transaction();
-					transaction.ImportState = (int)ImportState.Added;
-					transaction.Pending = importedTransaction.Pending;
-					transaction.Date = importedTransaction.Date;
-					transaction.OriginalDescription = importedTransaction.Description;
-					transaction.DayOrder = order;
-					transaction.Splits.Add(new Split { Amount = importedTransaction.Amount, Category = uncategorized });
-					account.Transactions.Add(transaction);
+					transaction.ImportState = (int)ImportState.Removed;
+//					transaction.OriginalDescription = string.Empty;
+					transaction.DayOrder = 255;
 				}
-				else
-				{
-					bestMatch.ImportState = (int)ImportState.Matched;
-					bestMatch.OriginalDescription = importedTransaction.Description;
-					bestMatch.DayOrder = order;
-					transactions.Remove(bestMatch);
-				}
-
-				order++;
-			}
-
-			// The rest of the transactions were not matched, so marking them as unreconciled
-			foreach (var transaction in transactions)
-			{
-				transaction.ImportState = (int)ImportState.Removed;
-//				transaction.OriginalDescription = string.Empty;
-				transaction.DayOrder = 255;
 			}
 
 			db.SaveChanges();
 
-			return RedirectToAction("Details", new { id = account.Id });
+			return RedirectToAction("Index", "Home");
 		}
 
 		public ActionResult Create()

@@ -6,7 +6,7 @@ using Spending.Models;
 
 namespace Spending.ViewModels
 {
-	public class TransactionsIndexModel
+	public class TransactionsReconcileModel
 	{
 		public AccountsModel AccountsInfo { get; set; }
 		public List<Transaction> Transactions { get; set; }

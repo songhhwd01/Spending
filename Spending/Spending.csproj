@@ -150,8 +150,10 @@
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\CategoryGroupsController.cs" />
     <Compile Include="Controllers\BudgetsController.cs" />
+    <Compile Include="Controllers\BoaLoginsController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Extensions\CheckLockedAttribute.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DecimalExtensions.cs" />
     <Compile Include="Global.asax.cs">
@@ -164,9 +166,10 @@
     <Compile Include="Models\CategoryGroup.cs" />
     <Compile Include="ViewModels\CategoriesModels.cs" />
     <Compile Include="ViewModels\AccountsModels.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\Budget.cs" />
+    <Compile Include="ViewModels\BoaLoginsEditModel.cs" />
+    <Compile Include="ViewModels\TransactionsReconcileModel.cs" />
     <Compile Include="ViewModels\TransactionsModels.cs" />
     <Compile Include="Models\Split.cs" />
     <Compile Include="ViewModels\HomeModels.cs" />
@@ -274,11 +277,7 @@
   <ItemGroup>
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\ChangePasswordSuccess.cshtml" />
-    <Content Include="Views\Account\LogOn.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_LogOnPartial.cshtml" />
+    <Content Include="Views\Account\Unlock.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Transactions\Edit.cshtml" />
@@ -312,6 +311,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Categories\CreateBudget.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_Accounts.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\BoaLogins\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Transactions\_Form.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Categories\_Form.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

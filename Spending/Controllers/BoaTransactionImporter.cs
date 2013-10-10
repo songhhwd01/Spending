@@ -54,7 +54,7 @@ namespace Spending
 			});
 
 			//
-			// Get and parse challenge page
+			// Get and parse challenge or password page
 			//
 
 			response = Request(baseUrl + "/login/sign-in/signOn.go", cookies, null);
@@ -63,21 +63,26 @@ namespace Spending
 			csrfToken = htmlDocument.GetElementbyId("csrfTokenHidden").Attributes["value"].Value;
 
 			navigator = htmlDocument.DocumentNode.CreateNavigator();
-			var challenge = navigator.SelectSingleNode("//label[@for='tlpvt-challenge-answer']").Value.Trim();
-			var answer = answers.ContainsKey(challenge) ? answers[challenge] : string.Empty;
+			var challengeLabel = navigator.SelectSingleNode("//label[@for='tlpvt-challenge-answer']");
 
-			//
-			// Submit challenge answer / get and parse password page
-			//
-
-			response = Request(baseUrl + "/login/sign-in/validateChallengeAnswer.go", cookies, new PostParam[]
+			if (challengeLabel != null)
 			{
-				new PostParam("csrfTokenHidden", csrfToken),
-				new PostParam("challengeQuestionAnswer", answer)
-			});
+				var challenge = challengeLabel.Value.Trim();
+				var answer = answers.ContainsKey(challenge) ? answers[challenge] : string.Empty;
 
-			htmlDocument = GetHtmlDocument(response);
-			csrfToken = htmlDocument.GetElementbyId("csrfTokenHidden").Attributes["value"].Value;
+				//
+				// Submit challenge answer / get and parse password page
+				//
+
+				response = Request(baseUrl + "/login/sign-in/validateChallengeAnswer.go", cookies, new PostParam[]
+				{
+					new PostParam("csrfTokenHidden", csrfToken),
+					new PostParam("challengeQuestionAnswer", answer)
+				});
+
+				htmlDocument = GetHtmlDocument(response);
+				csrfToken = htmlDocument.GetElementbyId("csrfTokenHidden").Attributes["value"].Value;
+			}
 
 			//
 			// Submit password / get accounts overview page
@@ -101,7 +106,7 @@ namespace Spending
 			htmlDocument = GetHtmlDocument(response);
 
 			var datePrefix = "goto_transactions_top_for_this_date_";
-			var statementLinks = htmlDocument.DocumentNode.SelectNodes(string.Format("//a[starts-with(@name, '{0}')]", datePrefix));
+			var statementLinks = htmlDocument.DocumentNode.SelectNodes(string.Format("//div[starts-with(@class, 'goto-trans-dropdown-box')]//a[starts-with(@name, '{0}')]", datePrefix));
 
 			var statements = new List<BoaStatement>();
 			DateTime stmtStartDate = DateTime.MinValue;
@@ -129,7 +134,12 @@ namespace Spending
 
 			foreach (var statement in ((IEnumerable<BoaStatement>)statements).Reverse())
 			{
-				response = Request(baseUrl + statement.Url, cookies, null);
+				var url = string.Format(
+					"/myaccounts/details/card/account-details.go?target=stmtFromDateList&adx={0}&stx={1}",
+					accountRefNum,
+					statement.Url.Substring(statement.Url.IndexOf("&stx=") + 5));
+
+				response = Request(baseUrl + url, cookies, null);
 
 				htmlDocument = GetHtmlDocument(response);
 				transactions.AddRange(GetTransactions(htmlDocument, negate, startDate, endDate));

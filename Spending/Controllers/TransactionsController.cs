@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.Mvc;
 using Spending.Models;
 using Spending.ViewModels;
@@ -13,16 +14,37 @@ namespace Spending.Controllers
 	{
 		private SpendingContext db = new SpendingContext();
 
-		public ActionResult Index(int accountId = 0, DateTime? startDate = null, DateTime? endDate = null, int transactionsPerPage = 30, int page = 1)
+		public ActionResult Index(int accountId = 0, DateTime? startDate = null, DateTime? endDate = null, int transactionsPerPage = 25, int page = 1)
 		{
+			this.TransactionsUrl = Request.Url.PathAndQuery;
+			this.ViewBag.ReturnUrl = this.TransactionsUrl;
+
 			startDate = startDate ?? DateTime.MinValue.Date;
 			endDate = endDate ?? DateTime.MaxValue.Date;
 
 			var model = new TransactionsIndexModel();
+			model.AccountsInfo = new AccountsModel();
 
-			var transactions = db.Transactions
-				.Where(x => x.AccountId == accountId && x.Date >= startDate && x.Date <= endDate)
-				.OrderByDescending(x => x.Date).ThenByDescending(x => x.DayOrder);
+			foreach (var item in db.Accounts.OrderBy(x => x.Order).ToList())
+			{
+				var itemInfo = new AccountModel();
+				itemInfo.Id = item.Id;
+				itemInfo.BoaLogin = item.BoaAccountRefNum == null ? null : db.BoaLogins.FirstOrDefault();
+				itemInfo.Name = item.Name;
+				itemInfo.Ending = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
+
+				model.AccountsInfo.Accounts.Add(itemInfo);
+				model.AccountsInfo.Ending += itemInfo.Ending;
+			}
+
+			var transactions = db.Transactions.Where(x => x.Date >= startDate && x.Date <= endDate);
+
+			if (accountId > 0)
+			{
+				transactions = transactions.Where(x => x.AccountId == accountId);
+			}
+
+			transactions = transactions.OrderByDescending(x => x.Date).ThenByDescending(x => x.DayOrder);
 
 			model.Transactions = transactions.Skip((page - 1) * transactionsPerPage).Take(transactionsPerPage).ToList();
 
@@ -42,6 +64,7 @@ namespace Spending.Controllers
 
 		public ActionResult Create(int accountId)
 		{
+			this.ViewBag.ReturnUrl = this.TransactionsUrl;
 			this.ViewBag.Accounts = db.Accounts;
 			this.ViewBag.Categories = db.Categories;
 
@@ -74,7 +97,7 @@ namespace Spending.Controllers
 				}
 
 				db.SaveChanges();
-				return RedirectToAction("Index", new { accountId = model.AccountId });
+				return Redirect(this.TransactionsUrl);
 			}
 
 			this.ViewBag.Accounts = db.Accounts;
@@ -84,6 +107,8 @@ namespace Spending.Controllers
 
 		public ActionResult Edit(int id)
 		{
+			this.ViewBag.ReturnUrl = this.TransactionsUrl;
+
 			Transaction transaction = db.Transactions.Find(id);
 
 			if (transaction == null)
@@ -182,7 +207,7 @@ namespace Spending.Controllers
 				}
 
 				db.SaveChanges();
-				return RedirectToAction("Index", new { accountId = model.AccountId });
+				return Redirect(this.TransactionsUrl);
 			}
 
 			this.ViewBag.Accounts = db.Accounts;
@@ -221,7 +246,7 @@ namespace Spending.Controllers
 
 			db.SaveChanges();
 
-			return RedirectToAction("Details", "Accounts", new { id = transaction.AccountId });
+			return Redirect(this.TransactionsUrl);
 		}
 
 		[HttpPost]
@@ -236,7 +261,13 @@ namespace Spending.Controllers
 
 			db.Transactions.Remove(transaction);
 			db.SaveChanges();
-			return RedirectToAction("Details", "Accounts", new { id = accountId });
+			return Redirect(this.TransactionsUrl);
+		}
+
+		private string TransactionsUrl
+		{
+			get { return (string)this.Session["TransactionsUrl"]; }
+			set { this.Session["TransactionsUrl"] = value; }
 		}
 	}
 }

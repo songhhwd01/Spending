@@ -38,11 +38,11 @@
 		
 	<p>
         <input type="submit" value="Save" />
-		@Html.ActionLink("Cancel", "Index", "Home")
+		@Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "cancelLink" })
     </p>
 }
 
-@using (Html.BeginForm("Delete", "CategorySubGroups", new { id = Model.Id }))
+@using (Html.BeginForm("Delete", "CategoryGroups", new { id = Model.Id }))
 {
 	<input type="submit" value="Delete" />
 }

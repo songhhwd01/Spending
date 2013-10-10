@@ -1,0 +1,113 @@
+﻿@model EditTransactionModel
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+	@Html.HiddenFor(model => model.AccountId);
+										  
+	<table id="fieldsTable">
+		<tr>
+			<td colspan="2">Edit Transaction</td>
+		</tr>
+		<tr>
+			<td>@Html.LabelFor(model => model.Date)</td>
+			<td>
+				@Html.EditorFor(model => model.Date)
+				@Html.ValidationMessageFor(model => model.Date)
+			</td>
+		</tr>
+		<tr>
+			<td>@Html.LabelFor(model => model.Description)</td>
+			<td>
+				@Html.EditorFor(model => model.Description)
+				@Model.OriginalDescription
+				@Html.ValidationMessageFor(model => model.Description)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@Html.LabelFor(model => model.Pending)
+			</td>
+			<td>
+				@Html.EditorFor(model => model.Pending)
+				@Html.ValidationMessageFor(model => model.Pending)
+			</td>
+		</tr>
+	</table>
+	<table id="splitsTable" class="styledTable">
+		<thead>
+			<tr>
+				<td>Splits</td>
+				<td colspan="3">@Html.ActionLink("Add Split", "CreateSplit", null, new { id = "addLink", @class = "actionLnk" })</td>
+			</tr>
+			<tr>
+				<td>Category</td>
+				<td>Notes</td>
+				<td>Amount</td>
+				<td>Delete</td>
+			</tr>
+		</thead>
+		<tbody>
+			@for (int i = 0; i < Model.Splits.Count; i++)
+			{
+				<tr class="itemRow">
+					<td>
+						@Html.HiddenFor(model => model.Splits[i].Id)
+						@Html.DropDownListFor(model => model.Splits[i].CategoryId,
+							new SelectList(ViewBag.Categories, "Id", "Name", Model.Splits[i].CategoryId))
+						@Html.ValidationMessageFor(model => model.Splits[i].CategoryId)
+					</td>
+					<td>
+						@Html.TextBoxFor(model => model.Splits[i].Notes)
+					</td>
+					<td>
+						@Html.TextBoxFor(model => model.Splits[i].Amount)
+					</td>
+					<td>
+						@Html.CheckBoxFor(model => model.Splits[i].Delete)
+					</td>
+				</tr>
+			}
+
+			@for (int i = 0; i < Model.NewSplits.Count; i++)
+			{
+				var splitModel = new Spending.Models.CreateSplitModel();
+				splitModel.NewSplits.Add(Guid.NewGuid().ToString(), Model.NewSplits[i]);
+				@Html.Partial("CreateSplit", splitModel)
+			}
+		</tbody>
+	</table>
+
+	<p>
+		<input type="submit" value="@ViewBag.SubmitCaption" />
+		<a href="@ViewBag.ReturnUrl" class="cancelLink">Cancel</a>
+	</p>
+}
+
+<script type="text/javascript">
+	$("#addLink").click(function ()
+	{
+		$.ajax(
+		{
+			url: this.href,
+			cache: false,
+			success: function (html) { $("#splitsTable tbody").append(html); }
+		});
+
+		return false;
+	});
+
+	$("a.deleteRow").live("click", function ()
+	{
+		if ($("#splitsTable tbody tr").length > 1)
+		{
+			$(this).parents("tr:first").remove();
+		}
+		else
+		{
+			alert("Must have at least one category.");
+		}
+
+		return false;
+	});
+</script>

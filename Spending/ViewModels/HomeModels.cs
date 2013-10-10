@@ -3,33 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Spending.Models
+namespace Spending.ViewModels
 {
 	public class HomeModel
 	{
 		public DateTime Month { get; set; }
 		public AccountsModel AccountsInfo { get; set; }
 		public CategoriesModel CategoriesInfo { get; set; }
-	}
-
-	public class AccountsModel
-	{
-		public AccountsModel()
-		{
-			this.Accounts = new List<AccountModel>();
-		}
-
-		public List<AccountModel> Accounts { get; set; }
-		public decimal Starting { get; set; }
-		public decimal Ending { get; set; }
-	}
-
-	public class AccountModel
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public decimal Starting { get; set; }
-		public decimal Ending { get; set; }
 	}
 
 	public class CategoriesModel

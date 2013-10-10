@@ -1,0 +1,88 @@
+﻿@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<title>Unlock</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/Content/css")
+		@Styles.Render("~/Content/themes/base/jquery-ui.css")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")
+		@Scripts.Render("~/Scripts/jquery.event.drag.js")
+		<style type="text/css">
+			form
+			{
+				width: 377px;
+				margin: 150px auto;
+				text-align: center;
+			}
+			form div
+			{
+			    float: left;
+			    background-color: White;
+			    border: 1px solid #AAAAAA;
+			    font-size: 75px;
+			    width: 75px;
+			    height: 75px;
+			    line-height: 75px;
+				margin-right: 23px;
+				margin-bottom: 50px;
+				text-align: center;
+			}
+			form div:nth-child(4) { margin-right: 0px; }
+			form span
+			{
+			    clear: both;
+			    display: block;
+			    margin: auto;
+			    width: 200px;
+			    border: 1px solid #FF0000;
+			    background-color: #FFCCCC;
+			    padding: 5px;
+			}
+		</style>
+    </head>
+    <body>
+		@using (Html.BeginForm())
+		{
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			@Html.Hidden("code")
+
+	  		if (ViewBag.IncorrectCode)
+			{
+				<span>Incorrect Code</span>
+			}
+		}
+
+		<script type="text/javascript">
+			var multiplier = 1000;
+			var index = 0;
+			var code = 0;
+
+			$(function () {
+				$(document).keypress(function (e) {
+					if (e.keyCode >= 48 && e.keyCode <= 57) {
+						var digit = e.keyCode - 48;
+						code += digit * multiplier;
+						multiplier /= 10;
+						index++;
+
+						$("form div:nth-child(" + index + ")").html("&bull;");
+
+						if (index == 4) {
+							$("#code").val(code);
+							$("form").submit();
+						}
+					}
+				});
+			});
+		</script>
+    </body>
+</html>

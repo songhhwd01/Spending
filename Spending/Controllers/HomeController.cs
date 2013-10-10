@@ -5,55 +5,46 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Spending.Models;
+using Spending.ViewModels;
 
 namespace Spending.Controllers
 {
 	public class HomeController : Controller
 	{
-		[Authorize]
-		public ActionResult Index()
+		public ActionResult Index(int year, int month)
 		{
 			HomeModel model = new HomeModel();
 
 			using (var db = new SpendingContext())
 			{
-				var user = db.Users.Find(Membership.GetUser().ProviderUserKey);
-
-				model.Month = user.Settings.Select(x => x.Month).First();
-				model.Month.AddDays(-model.Month.Day + 1);
-
+				model.Month = new DateTime(year, month, 1);
 				model.AccountsInfo = new AccountsModel();
+				model.CategoriesInfo = new CategoriesModel();
 
-				foreach (var item in user.Accounts.OrderBy(x => x.Order).ToList())
+				foreach (var item in db.Accounts.OrderBy(x => x.Order).ToList())
 				{
 					var itemInfo = new AccountModel();
 					itemInfo.Id = item.Id;
+					itemInfo.BoaLogin = item.BoaAccountRefNum == null ? null : db.BoaLogins.FirstOrDefault();
 					itemInfo.Name = item.Name;
-					itemInfo.Starting = item.Transactions.Where(x => !x.Pending && x.Date < model.Month).SelectMany(x => x.Splits).Sum(x => x.Amount);
-					itemInfo.Ending = itemInfo.Starting + item.Transactions
-						.Where(x => !x.Pending && x.Date >= model.Month && x.Date < model.Month.AddMonths(1))
-						.SelectMany(x => x.Splits)
-						.Sum(x => x.Amount);
+					itemInfo.Ending = item.Transactions.Where(x => !x.Pending).SelectMany(x => x.Splits).Sum(x => x.Amount);
 
 					model.AccountsInfo.Accounts.Add(itemInfo);
-					model.AccountsInfo.Starting += itemInfo.Starting;
 					model.AccountsInfo.Ending += itemInfo.Ending;
 				}
 				
-				model.CategoriesInfo = new CategoriesModel();
-
-				model.CategoriesInfo.Unassigned = user.Accounts
+				model.CategoriesInfo.Unassigned = db.Accounts
 					.SelectMany(x => x.Transactions)
 					.Where(x => x.Date < model.Month)
 					.SelectMany(x => x.Splits)
 					.Sum(x => x.Amount);
 
-				foreach (var category in user.Categories.Where(x => x.Income).ToList())
+				foreach (var category in db.Categories.Where(x => x.Income).ToList())
 				{
 					model.CategoriesInfo.Unassigned += category.Splits.Where(x => x.Amount > 0).Sum(x => x.Amount);
 				}
 
-				foreach (var group in user.CategoryGroups.OrderBy(x => x.Order).ToList())
+				foreach (var group in db.CategoryGroups.OrderBy(x => x.Order).ToList())
 				{
 					var groupInfo = new CategoryGroupModel();
 					groupInfo.Id = group.Id;
@@ -84,11 +75,11 @@ namespace Spending.Controllers
 						decimal targetAvg = 0;
 						int targetMonths = 0;
 						decimal targetRunningBudget = 0;
-						var month = DateTime.UtcNow;
+						var mon = DateTime.UtcNow;
 
 						for (int months = 1; months < 600; months++)
 						{
-							month = month.AddMonths(1);
+							mon = mon.AddMonths(1);
 
 							decimal totalBudget = 0;
 
@@ -97,8 +88,8 @@ namespace Spending.Controllers
 								if (budget.Frequency > 0)
 								{
 									var monthDiff =
-										(month.Year - budget.StartingMonth.Year) * 12 +
-										month.Month - budget.StartingMonth.Month;
+										(mon.Year - budget.StartingMonth.Year) * 12 +
+										mon.Month - budget.StartingMonth.Month;
 
 									if (monthDiff >= 0 &&
 										(budget.Times == 0 || monthDiff / budget.Frequency < budget.Times) &&
